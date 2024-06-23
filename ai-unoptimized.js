@@ -82,7 +82,12 @@ const setup = (function(settings = {
 			id: "let_me_know_when_you_need_assistance"
 		},
 		{
-			regex: /(are(n't?))\s*you\s*((really\s*)*)((a(n?)\s*)?)(ai|artifical\s*intelligence|((responsive\s*|messaging\s*|messager\s*)?)|(ro?)bot)/i,
+			regex: {
+				test: function(text) {
+					text = text.toLowerCase()
+					return /(are(n't?))\s*you\s*((really\s*)*)((a(n?)\s*)?)(ai|artifical\s*intelligence|((responsive\s*|messaging\s*|messager\s*)?)|(ro?)bot)|are(\s*)you(\s*)ai\|are(\s*)you(\s*)artificial(\s*)intelligence/.test(text) || text.includes("are you ai") || text.includes("are you artifical intelligence") || text.includes("aren't you ai") || text.includes("aren't you artifical intelligence") || text.includes("are you really ai") || text.includes("are you really artifical intelligence")
+				}
+			},
 			responses: function() {
 				const to_ask_or_not_to_ask = Math.random() < 0.5 ? " " + (lazyp ? ra(["Why did you ask?", "Why?"]) : ra(["Why did you ask whether I was a bot or not?", "Why did you ask whether I was a robot or not?", "Why did you ask that question?", "Why did you ask the question?"])) : ""
 				if (to_ask_or_not_to_ask.length > 0) {
@@ -97,14 +102,14 @@ const setup = (function(settings = {
 			responses: function(name, match) {
 				if (currentlyasking === "botornot") {
 					currentlyasking = ""
-					return ra(["Oh, okay!", "Okay!", "I know why now!", "I see why now!", "That makes sense!", "That's a good reason!", "Thanks for explaining why!", "Thanks for showing me why!", "Thanks for showing me why you asked!", "Thank you for showing me why you asked!", "Thank you for showing me why!"])
+					return [ra(["Oh, okay!", "Okay!", "I know why now!", "I see why now!", "That makes sense!", "That's a good reason!", "Thanks for explaining why!", "Thanks for showing me why!", "Thanks for showing me why you asked!", "Thank you for showing me why you asked!", "Thank you for showing me why!"]), true]
 				} else {
 					currentlyasking = "confused"
 					if (/i\s*((just\s*)?)wanted\s*to\s*ask\s*if\s*you\s*were/i.test(match)) {
 						currentlyasking = "botornot"
-						return ra(["Okay. ", "Okay, ", ""]) + ra(["I'm waiting for the real question.", "I'm waiting for your real question.", "I'm waiting for you to ask if I was AI or not.", "I'm waiting for " + ra(["your", "the", "this"]) + " question."])
+						return [ra(["Okay. ", "Okay, ", ""]) + ra(["I'm waiting for the real question.", "I'm waiting for your real question.", "I'm waiting for you to ask if I was AI or not.", "I'm waiting for " + ra(["your", "the", "this"]) + " question."]), false]
 					} else {
-						return westernp ? ra(["What're you talkin' about exactly?", "What were you talkin' about/asking previously?", "Why were you tellin' me this?"]).replace(/\?/g, (!!name ? ", " + name : Math.random() < 0.5 ? "" : ", " + ra(["mate", "partner"])) + "?") : ra(["What are you talking about exactly?", "What were you talking about/asking previously?", "Why were you telling me this?"])
+						return [westernp ? ra(["What're you talkin' about exactly?", "What were you talkin' about/asking previously?", "Why were you tellin' me this?"]).replace(/\?/g, (!!name ? ", " + name : Math.random() < 0.5 ? "" : ", " + ra(["mate", "partner"])) + "?") : ra(["What are you talking about exactly?", "What were you talking about/asking previously?", "Why were you telling me this?"]), false]
 					}
 				}
 			},
@@ -121,6 +126,13 @@ const setup = (function(settings = {
 				return a + (a !== "Of course" ? ", " : " ") + ra(["I can", "I can explain myself", "I can explain my purpose"]) + ra([".", "!"]) + " " + b
 			},
 			id: "can_you_tell_me_about_yourself"
+		},
+		{
+			regex: /(?:(?!(i'm|i\s*am)\s*))ok(ay?)/i,
+			responses: function() {
+				return "If you " + ra(["need", "want", "need to ask for", "want to ask for"]) + " " + ra(["help", "assistance"]) + (Math.random() < 0.5 ? " anytime" : "") + ", " + ra(["let me know", "feel free to let me know", "let me assist you", "feel free to let me assist you", "feel free to let me help you", "let me help you"]) + (Math.random() < 0.5 ? " " + ra(["at that time", "when you need me" + (Math.random() < 0.5 ? " or anything" + (Math.random() < 0.79 ? " else" : "") : "")]) : "") + ra([".", "!"])
+			},
+			id: "okay"
 		}
 	].filter(item => !settings.personalities.some(i => typeof i === "object" && !Array.isArray(i) && !!i && i.id === item.id && i.type === "exc_response_id"))
 	const information = {
@@ -138,12 +150,23 @@ const setup = (function(settings = {
 			}
 			let greeted = false
 			for (const item of regexes) {
-				const a = item.responses(information.username, response.match(item.regex)[0]).replace(/(,?)(\s*)\./g, ".").replace(/(,?)(\s*)\!/g, "!").replace(/  /g, " ")
+				const b = response.match(item.regex)
+				const a = item.responses(information.username, b !== null ? b[0] : "").replace(/(,?)(\s*)\./g, ".").replace(/(,?)(\s*)\!/g, "!").replace(/  /g, " ")
 				if (item.regex.test(response)) {
 					if (item.id.startsWith("greet")) {
 						if (greeted === false) {
 							ai += a
 							greeted = true
+						}
+					} else if (item.id === "i_was_curious:are_you_an_ai") {
+						if (a[1]) {
+							if (/i\s*((really\s*|actually\s*)*)wanted\s*to\s*ask\s*if\s*you('re|\s*were)\s*((a(n?)\s*)?)(ai|artifical\s*intelligence|(ro?)bot)/i.test(response)) {
+								currentlyasking = ""
+								ai += item.responses(information.username, "i just wanted to ask if you were ai")
+								currentlyasking = "botornot"
+							}
+						} else {
+							ai += a[0]
 						}
 					} else {
 						ai += a
