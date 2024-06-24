@@ -95,7 +95,7 @@ let questions = [
 		}
 	},
 	{
-		question: "Is yogurt made with fermintation?",
+		question: "Is yogurt made with fermentation?",
 		type: 0,
 		answers: {
 			"No": false,
@@ -532,6 +532,128 @@ let questions = [
 			"the person has a stronger skull": false
 		},
 		warning: "The letters enclosed in parenthesis means that they are optional, and they vary based on how many of that thing there is."
+	},
+	{
+		question: "Can energy (an energetic power) possibly emit heat?",
+		type: 0,
+		answers: {
+			"Yes": true,
+			"No": false
+		}
+	},
+	{
+		question: "What do white blood cells do in the human's body?",
+		type: 0,
+		answers: {
+			"White blood cells are meant to help fight of bacteria": true,
+			"White blood cells are meant to help heal the skin": false,
+			"White blood cells are meant to help circulate our blood flow": false
+		}
+	},
+	{
+		question: "Which of this word is spelled correctly?",
+		type: 0,
+		answers: {
+			"barnicle": false,
+			"barnacle": true,
+			"barnicole": false,
+			"barnacol": false
+		}
+	},
+	{
+		question: "Does ice cream have something to do with dairy?",
+		type: 0,
+		answers: {
+			"Yes": true,
+			"No": false
+		}
+	},
+	{
+		question: "Yeast is an ingredient used in fermentation. But what would it affect from the appearance of food?",
+		type: 0,
+		answers: {
+			"Yeast would probably cause small holes in the food": true,
+			"Yeast would probably cause blue or black colors in the food": false,
+			"Yeast would probably cause the food to be soft": true,
+			"Yeast would probably cause the food to grow leaves": false
+		}
+	},
+	{
+		question: "What is three cubed exponentially?",
+		type: 0,
+		answers: {
+			"27": true,
+			"9": false,
+			"54": false,
+			"36": false
+		}
+	},
+	{
+		question: "How many sides does a cube have three-dimensionally?",
+		type: 0,
+		answers: {
+			"6": true,
+			"8": false,
+			"12": false,
+			"4": false
+		}
+	},
+	{
+		question: "How many sides does a triangle have three-dimensionally?",
+		type: 0,
+		answers: {
+			"6": false,
+			"8": false,
+			"12": false,
+			"4": true
+		}
+	},
+	{
+		question: "What are calories in food?",
+		type: 0,
+		answers: {
+			"Calories are the chemicals that provide energy.": true,
+			"Calories are the chemicals that help with fermentation.": false,
+			"Calories are the chemicals that help with cancer.": false,
+			"Calories are the chemicals that provide more energy to the heart of the human.": false
+		}
+	},
+	{
+		question: "Who was the smartest person to live back in the early years?",
+		type: 0,
+		answers: {
+			"Albert Einstien": true,
+			"J.K. Rowling": false,
+			"Donald Trump": false,
+			"Joe Biden": false,
+			"LeBron James": false
+		}
+	},
+	{
+		question: "Cells are a very small living type of organism that",
+		type: 0,
+		answers: {
+			"makes up the creature/material": true,
+			"moves around randomly": false,
+			"has arms, and grabs anything they want": false,
+			"makes up just the creature": false
+		}
+	},
+	{
+		question: "Is paper made out of wood?",
+		type: 0,
+		answers: {
+			"Yes": true,
+			"No": false
+		}
+	},
+	{
+		question: "Does a circle have Infinity sides, or 0 sides? This is a free choice.",
+		type: 0,
+		answers: {
+			"Infinity sides": true,
+			"0 sides": true
+		}
 	}
 ]
 alert("This quiz has " + questions.length + " questions!")
@@ -585,7 +707,7 @@ questionsD.appendChild(buttons);
 			setTimeout(() => alert(question.warning), 100)
 		}
 		const answer = await getAnswer(question)
-		if (question.answers[answer[0]]) {
+		if (question.answers[answer[0]] && !Object.values(question.answers).every(item => item === true)) {
 			questionscore += 1
 		}
 		buttons.querySelectorAll("button").forEach(function(item){
