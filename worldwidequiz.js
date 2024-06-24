@@ -412,7 +412,7 @@ let questions = [
 let questionscore = 0
 function randomize(questions) {
 	let arr = []
-	while (array.length !== 0) {
+	while (questions.length !== 0) {
 		const a = Math.floor(Math.random() * questions.length)
 		arr.push(questions[a])
 		questions.splice(a, 1)
@@ -424,7 +424,8 @@ const questionsD = document.createElement("div")
 const p = document.createElement("a")
 const buttons = document.createElement("div")
 document.body.appendChild(questionsD)
-questionsD.appendChild()
+questionsD.appendChild(p)
+questionsD.appendChild(buttons);
 (async function() {
 	async function getAnswer(q) {
 		return new Promise(function(res) {
@@ -432,6 +433,7 @@ questionsD.appendChild()
 			buttons.querySelectorAll("button").forEach((e)=>e.remove())
 			randomize(Object.keys(ans)).forEach(function(item) {
 				const button = document.createElement("button")
+				buttons.appendChild(button)
 				button.textContent = item
 				button.onclick = function() {
 					if (ans[item] === true) {
@@ -448,7 +450,7 @@ questionsD.appendChild()
 	}
 	async function wait(milliseconds) {
 		return new Promise(function(res) {
-			setTimeout(res, milliseconds)
+			setTimeout(()=>res(), milliseconds)
 		})
 	}
 	for (const question of questions) {
@@ -460,12 +462,12 @@ questionsD.appendChild()
 		if (question.answers[answer[0]]) {
 			questionscore += 1
 		}
-		questionsD.querySelectorAll("button").filter(item => item !== answer[1]).forEach(function(item){
+		buttons.querySelectorAll("button").forEach(function(item){
 			const e = question.answers[item.textContent]
 			item.style.backgroundColor = (e === null ? "gray" : e ? "green" : "red")
 		})
-		wait(3000)
+		await wait(500)
 	}
-	questionsD.innerHTML = ""
+	buttons.innerHTML = ""
 	p.textContent = "Your IQ is: " + (50 + (questionscore / 0.9784))
 })()
