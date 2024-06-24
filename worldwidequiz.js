@@ -376,7 +376,7 @@ let questions = [
 		}
 	},
 	{
-		question: "True or false: Foil can be bent in all kinds of shapes.",
+		question: "True or false: Aluminum foil can be bent in all kinds of shapes.",
 		type: 0,
 		answers: {
 			"True": true,
@@ -682,7 +682,7 @@ let questions = [
 		}
 	},
 	{
-		question: "Is Tr*ollFa*ce trademarked?",
+		question: "Is TrollFace trademarked?",
 		type: 0,
 		answers: {
 			"Yes": false,
