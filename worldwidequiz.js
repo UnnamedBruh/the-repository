@@ -466,5 +466,6 @@ questionsD.appendChild()
 		})
 		wait(3000)
 	}
-	questio
+	questionsD.innerHTML = ""
+	p.textContent = "Your IQ is: " + (50 + (questionscore / 0.9784))
 })()
