@@ -87,7 +87,7 @@ let questions = [
 		}
 	},
 	{
-		question: "Should all lives (including bugs) be well-respected? This has a correct answer.",
+		question: "Should people's lives be well-respected? This has a correct answer.",
 		type: 0,
 		answers: {
 			"Yes": true,
@@ -126,16 +126,6 @@ let questions = [
 			"Ketchup and sugar": false,
 			"Ketchup and salt and sugar": false,
 			"Well duh, barbeque sauce.": false
-		}
-	},
-	{
-		question: "Which word is a classic british term for a man?",
-		type: 0,
-		answers: {
-			"Bloke": true,
-			"Blann": false,
-			"Boy": false,
-			"Man": false
 		}
 	},
 	{
@@ -273,7 +263,7 @@ let questions = [
 		}
 	},
 	{
-		question: "Autism makes it so you have trouble sleeping sometimes, but you would have better brain development. Is this true?",
+		question: "Autism makes it so you have trouble sleeping sometimes, but you would have better brain tuning. Is this true?",
 		type: 0,
 		answers: {
 			"Yes": true,
@@ -333,7 +323,7 @@ let questions = [
 		}
 	},
 	{
-		question: "Why is smoking bad for you? Pick a more reasonable explanation below.",
+		question: "Why is smoking cigars bad for you? Pick a more reasonable explanation below.",
 		type: 0,
 		answers: {
 			"This is because too much smoke can cause cellular and high damage to the organ's functionality, specifically, and generally.": true,
@@ -384,7 +374,7 @@ let questions = [
 		}
 	},
 	{
-		question: "True or false: Epilepsy means to suffer an experience of highly-noticeable flashing.",
+		question: "True or false: Epilepsy means that the person can become overstimulated after an experience of highly-noticeable flashing.",
 		type: 0,
 		answers: {
 			"True": true,
@@ -417,16 +407,6 @@ let questions = [
 			"This means to like one gender, and dislike another gender": false
 		},
 		warning: "This is not meant to be offensive/inappropriate!"
-	},
-	{
-		question: "Which year had the most events that happened below?",
-		type: 0,
-		answers: {
-			"2012": true,
-			"2000": false,
-			"2010": false,
-			"2016": false
-		}
 	},
 	{
 		question: "True or false: Milk contains lactose in it.",
@@ -490,11 +470,11 @@ let questions = [
 		}
 	},
 	{
-		question: "True or false: Most romantic movies that involve dating are not appropriate for kids.",
+		question: "True or false: Nicotine is supposed to help develop our brain.",
 		type: 0,
 		answers: {
-			"True": true,
-			"False": false
+			"True": false,
+			"False": true
 		}
 	},
 	{
@@ -522,7 +502,7 @@ let questions = [
 		}
 	},
 	{
-		question: "Having a name 'Albert' commonly means that",
+		question: "Having a name 'Albert' has a meaning. That meaning is either:",
 		type: 0,
 		answers: {
 			"the person is smart": true,
@@ -700,7 +680,7 @@ let questions = [
 		}
 	},
 	{
-		question: "Is this binary real text, or just unicodes (111100011100000011010100001)?",
+		question: "When this is translated, is this binary real text or just unicodes (111100011100000011010100001)?",
 		type: 0,
 		answers: {
 			"Real Text": false,
@@ -748,7 +728,7 @@ let questions = [
 			"Blue": false
 		}
 	}
-]
+].filter(w => !warning.warning)
 alert("This quiz has " + questions.length + " questions!")
 let questionscore = 0
 function randomize(questions) {
