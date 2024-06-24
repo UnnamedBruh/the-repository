@@ -1,7 +1,9 @@
-<script>
-	(async function() {
-		let data = await fetch("./worldwidequiz.js")
-		data = await data.text()
-		eval(data)
-	})()
-</script>
+<body>
+	<script>
+		(async function() {
+			let data = await fetch("../worldwidequiz.js")
+			data = await data.text()
+			eval(data)
+		})()
+	</script>
+</body>
