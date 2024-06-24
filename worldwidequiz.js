@@ -595,5 +595,5 @@ questionsD.appendChild(buttons);
 		await wait(500)
 	}
 	buttons.innerHTML = ""
-	p.textContent = "Your IQ is: " + (50 + (questionscore / 0.9784))
+	p.textContent = "Your IQ is: " + (50 + (questionscore / 0.9784)) + ". This is just an approximate calculation, so try not to take this calculation too literally. You also answered " + questionscore + " questions correctly. " + (questionscore < 5 ? "... I don't know if you did very well..." : questionscore < 10 ? "At least you got less than/equal to 10 questions right." : questionscore < 15 ? "Most people probably got 40-52 questions right." : questionscore < 20 ? "Not bad, not bad." : questionscore < 25 ? "That's a good accomplishment if you're a fourth grader." : questionscore < 35 ? "You're actually as smart as a fourth grader." : questionscore < 50 ? "You are great at beating quizzes like this!" : questionscore <= questions.length ? "You're as smart as the creator of this quiz (Unnamedbruh)! Congratulations!")
 })()
