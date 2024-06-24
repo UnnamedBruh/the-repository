@@ -728,7 +728,7 @@ let questions = [
 			"Blue": false
 		}
 	}
-].filter(w => !warning.warning)
+].filter(w => !w.warning)
 alert("This quiz has " + questions.length + " questions!")
 let questionscore = 0
 function randomize(questions) {
