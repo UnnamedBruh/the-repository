@@ -13,7 +13,7 @@ let questions = [
 		answers: {
 			"Nucleus": false,
 			"Mitochondrion": true,
-			"Endoplasmatic Reticulum": false,
+			"Endoplasmic Reticulum": false,
 			"Golgi Body/Golgi Apparatus": false
 		}
 	},
@@ -653,6 +653,99 @@ let questions = [
 		answers: {
 			"Infinity sides": true,
 			"0 sides": true
+		}
+	},
+	{
+		question: "Which color is the most common for frogs to have in cartoons?",
+		type: 0,
+		answers: {
+			"Green": true,
+			"Orange/tan": false
+		}
+	},
+	{
+		question: "Which chemical is usually put in pools?",
+		type: 0,
+		answers: {
+			"Chlorine": true,
+			"Alcohol": false,
+			"H2O": true,
+			"I don't know chemicals": null
+		}
+	},
+	{
+		question: "Is it possible for a human to be six feet tall?",
+		type: 0,
+		answers: {
+			"Yes": true,
+			"No": false
+		}
+	},
+	{
+		question: "Is Tr*ollFa*ce trademarked?",
+		type: 0,
+		answers: {
+			"Yes": false,
+			"No": true
+		}
+	},
+	{
+		question: "Which phobia fits this description: 'We see objects/hear people that are not real'?",
+		type: 0,
+		answers: {
+			"Arachnophobia": false,
+			"Schizophrenia": true,
+			"Entomophobia": false,
+			"Trypophobia": false
+		}
+	},
+	{
+		question: "Is this binary real text, or just unicodes (111100011100000011010100001)?",
+		type: 0,
+		answers: {
+			"Real Text": false,
+			"Just unicodes": true
+		}
+	},
+	{
+		question: "Are you having fun with this quiz?",
+		type: 0,
+		answers: {
+			"Yes": true,
+			"No": true
+		}
+	},
+	{
+		question: "Which organelle is like the brain for the cell?",
+		type: 0,
+		answers: {
+			"Nucleus": true,
+			"Membrane": false,
+			"Mitochondria": false,
+			"Endoplasmic Reticulum": false
+		}
+	},
+	{
+		question: "A drill is used to...",
+		type: 0,
+		answers: {
+			"dig a deep hole in a place": true,
+			"kill people when they are bad": false,
+			"entertain people": false,
+			"spinning an object": false
+		}
+	},
+	{
+		question: "Which colors are common for tape?",
+		type: 0,
+		answers: {
+			"Yellow": true,
+			"Grey": true,
+			"White": true,
+			"Red": false,
+			"Orange": false,
+			"Green": false,
+			"Blue": false
 		}
 	}
 ]
