@@ -407,8 +407,134 @@ let questions = [
 			"False": false,
 			"I did not experience this event": null
 		}
+	},
+	{
+		question: "What does it mean to be bisexual?",
+		type: 0,
+		answers: {
+			"This means to like two genders at the same time": true,
+			"This means to not respect anyone": false,
+			"This means to like one gender, and dislike another gender": false
+		},
+		warning: "This is not meant to be offensive/inappropriate!"
+	},
+	{
+		question: "Which year had the most events that happened below?",
+		type: 0,
+		answers: {
+			"2012": true,
+			"2000": false,
+			"2010": false,
+			"2016": false
+		}
+	},
+	{
+		question: "True or false: Milk contains lactose in it.",
+		type: 0,
+		answers: {
+			"True": true,
+			"False": false
+		}
+	},
+	{
+		question: "True or false: Dairy usually would involve including milk as a recipe.",
+		type: 0,
+		answers: {
+			"True": true,
+			"False": false
+		}
+	},
+	{
+		question: "True or false: Binary originally can also contain numbers outside just zeros and ones.",
+		type: 0,
+		answers: {
+			"True": false,
+			"False": true
+		}
+	},
+	{
+		question: "The nerves in a human's body travel up on which body part to reach to the brain?",
+		type: 0,
+		answers: {
+			"Spinal cord": true,
+			"Ribs": false,
+			"Around the stomach": false
+		}
+	},
+	{
+		question: "What is the color of a human's nerves?",
+		type: 0,
+		answers: {
+			"Blue": true,
+			"Red": false,
+			"Pink": false,
+			"Violet": false
+		}
+	},
+	{
+		question: "What is the color of an ox's nerves?",
+		type: 0,
+		answers: {
+			"Red": false,
+			"Violet": true,
+			"Pink": false,
+			"Blue": false
+		}
+	},
+	{
+		question: "True or false: PI is basically the diameter of the circle.",
+		type: 0,
+		answers: {
+			"True": true,
+			"False": false
+		}
+	},
+	{
+		question: "True or false: Most romantic movies that involve dating are not appropriate for kids.",
+		type: 0,
+		answers: {
+			"True": true,
+			"False": false
+		}
+	},
+	{
+		question: "Who made this quiz?",
+		type: 0,
+		answers: {
+			"Unnamedbruh": true,
+			"Nexus": false,
+			"RobTop": false,
+			"Nintendo": false,
+			"Toby Fox": false,
+			"RubRub": false,
+			"Sega": false
+		}
+	},
+	{
+		question: "Who was the richest man on Earth, ever?",
+		type: 0,
+		answers: {
+			"Jeff Bezos": true,
+			"Barack Obama": false,
+			"Elon Musk": false,
+			"Amelia Earhart": false,
+			"Donald Trump": false
+		}
+	},
+	{
+		question: "Having a name 'Albert' commonly means that",
+		type: 0,
+		answers: {
+			"the person is smart": true,
+			"the person fails college in the future": false,
+			"the person has ADHD": false,
+			"the person has (a) double-jointed body part(s)": false,
+			"the person has a stronger skull": false
+		},
+		warning: "The letters enclosed in parenthesis means that they are optional, and they vary based on how many of that thing there is."
 	}
 ]
+alert("This quiz has " + questions.length + " questions!")
 let questionscore = 0
 function randomize(questions) {
 	let arr = []
