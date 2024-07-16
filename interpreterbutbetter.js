@@ -111,13 +111,19 @@ const run = function(text, c = true) {
 					})
 					state = "forif"
 				} else if (state === "if") {
-					if (token.startsWith("end")) {
-						tokens.push({
-							type: "sou", // source
-							f: parseLines(lines)
-						})
-						state = ""
-						lines = []
+					let ifends = 0
+					if (token.startsWith("if")) {
+						ifends++
+					} else if (token.startsWith("end")) {
+						ifends--
+						if (ifends == 0) {
+							tokens.push({
+								type: "sou", // source
+								f: parseLines(lines)
+							})
+							state = ""
+							lines = []
+						}
 					} else {
 						lines.push(token)
 					}
@@ -223,7 +229,7 @@ const run = function(text, c = true) {
 			}
 			return f
 		}
-		const y = result[i+1].f.some(i => i.type === "getti")
+		const y = result.some(i => i.hasOwnProperty("f") ? i.some(j => j.type === "getti"))
 		function compileLines(result, isbase) {
 			let code = "" + (isbase ? (y ? "const time=performance.now();" : "") : "")
 			let i = 0
