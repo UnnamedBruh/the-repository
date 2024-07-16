@@ -199,7 +199,7 @@ let questions = [
 		}
 	},
 	{
-		question: "What is the true meaning of life?",
+		question: "What is the generic true meaning of life?",
 		type: 0,
 		answers: {
 			"To explore, to see the vast wonders of the world": true,
@@ -222,8 +222,8 @@ let questions = [
 		question: "True or false: Dainty is used to describe an object that is dirty or unpleasant.",
 		type: 0,
 		answers: {
-			"No": true,
-			"Yes": false
+			"False": true,
+			"True": false
 		}
 	},
 	{
@@ -442,13 +442,14 @@ let questions = [
 		}
 	},
 	{
-		question: "What is the color of a human's nerves?",
+		question: "What is the color of a human's nerves? If there are too many claims online, just choose 'I do not know'.",
 		type: 0,
 		answers: {
 			"Blue": true,
 			"Red": false,
 			"Pink": false,
-			"Violet": false
+			"Violet": false,
+			"I do not know": null
 		}
 	},
 	{
@@ -487,7 +488,9 @@ let questions = [
 			"Nintendo": false,
 			"Toby Fox": false,
 			"RubRub": false,
-			"Sega": false
+			"Sega": false,
+			"Plotagon Team": false,
+			"Vector from Despicable Me": false
 		}
 	},
 	{
@@ -777,7 +780,7 @@ questionsD.appendChild(buttons);
 	for (const question of questions) {
 		p.textContent = question.question
 		if (question.warning) {
-			setTimeout(() => alert(question.warning), 100)
+			setTimeout(() => alert(question.warning), 30)
 		}
 		const answer = await getAnswer(question)
 		if (question.answers[answer[0]] && !Object.values(question.answers).every(item => item === true)) {
