@@ -201,8 +201,8 @@ const setup = (function(settings = {
 					} else {
 						return "I " + ra([("apologize" + " " + ra(["", "for the inconvenience"])).trim()])
 					}
-				}).replace(/inconveniencesorry/, function() {
-					return "inconvenience" + ra([", ", " "]) + "and " + ra(["I am ", "I'm "]) + "sorry"
+				}).replace(/(inconvenience|apologize)sorry/, function(_, e) {
+					return e + ra([", ", " "]) + "and " + ra(["I am ", "I'm "]) + "sorry"
 				})
 			}
 			if (detectAgainstGuidelines(response).result) {
