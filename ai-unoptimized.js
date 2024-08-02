@@ -201,6 +201,10 @@ const setup = (function(settings = {
 					} else {
 						return "I " + ra([("apologize" + " " + ra(["", "for the inconvenience"])).trim()])
 					}
+				}).replace(/(i'?)[a-hA-Hj-zJ-Z] /g, function(match) {
+					return match.startsWith("i'") ? "i'm " : ""
+				}).replace(/inconveniencesorry/, function() {
+					return "inconvenience" + ra([", ", " "]) + "and " + ra(["I am ", "I'm "]) + "sorry"
 				})
 			}
 			if (detectAgainstGuidelines(response).result) {
