@@ -14,8 +14,9 @@ const setup = (function(settings = {
 	}
 	function detectAgainstGuidelines(input) {
 		const regexes = [
-			/((do\s*you|i\s*(really\s*|actually\s*)*((not\s*)?)((dis?)like|hate))\s*((my\s*)?)\s*(sex(y?)|porn|cock(?!tail)|(ass|anus)(hole?)|penis|dick|gyatt|pussy|boob(s?))(((i?)e?)s?))|(wanna|want\s*to)\s*(see|kiss|play(\s*with?)|watch|look\s*at|help)\s*(([a-zA-Z]+('s?))?)\s*(ass(hole?)|dick|penis|gyatt|butt(hole?)|pussy)|(picture|image|display|screen)\s*(of|from)\s*(([a-zA-Z]+('s?))?)\s*((ass|anus)(hole?)|dick|penis|gyatt|butt(hole?)|pussy)|([a-zA-Z]+)(\s*(can\s*(commit|do)|(committed|did)|am\s*thinking\s*of\s*(doing?))\s*(suicide|self(\s*|-)harm|nudity)|\s*(took|drank|drink(s?))\s*((a\s*(cup|bottle|drink|jug)\s*of\s*)?)(cocaine|weed|cigar(ette?)(s?)|alcohol|tobacco)|\s*smoke(d?)\s*((some|a\s*((really\s*)?)((large|small|tiny|huge|big|mega)?)(\s*amount\s*of?))?)\s*(cigar(ette?)(s?)|tobacco|weed))|((ass|anus)(hole?)|dick|penis|gyatt|butt(hole?)|pussy|porn|xxx|naked\s*(man|woman|boy|girl|person|human))\s*image|([a-zA-Z]('m?))\s*(think(ing?)\s*of)?\s*(drink(ing?)|tak(e|ing))\s*(some|a\s*(cup|jar|bottle|jug|(big|large|mega|huge|small|tiny)\s*amount\s*of))\s*(cocaine|alcohol|tobacco)/i
+			/((do\s*you|i\s*(really\s*|actually\s*)*((not\s*)?)((dis?)like|hate))\s*((my\s*)?)\s*(sex(y?)|porn|cock(?!tail)|(ass|anus)(hole?)|penis|dick|gyatt|pussy|boob(s?))(((i?)e?)s?))|(wanna|want\s*to)\s*(see|kiss|play(\s*with?)|watch|look\s*at|help)\s*(([a-zA-Z]+('s?))?)\s*(ass(hole?)|dick|penis|gyatt|butt(hole?)|pussy)|(picture|image|display|screen)\s*(of|from)\s*(([a-zA-Z]+('s?))?)\s*((ass|anus)(hole?)|dick|penis|gyatt|butt(hole?)|pussy)|([a-zA-Z]+)(\s*(can\s*(commit|do)|(committed|did)|am\s*thinking\s*of\s*(doing?))\s*(suicide|self(\s*|-)harm|nudity)|\s*(took|drank|drink(s?))\s*((a\s*(cup|bottle|drink|jug)\s*of\s*)?)(cocaine|weed|cigar(ette?)(s?)|alcohol|tobacco)|\s*smoke(d?)\s*((some|a\s*((really\s*)?)((large|small|tiny|huge|big|mega)?)(\s*amount\s*of?))?)\s*(cigar(ette?)(s?)|tobacco|weed))|((ass|anus)(hole?)|dick|penis|gyatt|butt(hole?)|pussy|porn|xxx|naked\s*(man|woman|boy|girl|person|human))\s*image|([a-zA-Z]+('m?))\s*(think(ing?)\s*of)?\s*(drink(ing?)|tak(e|ing))\s*(some|a\s*(cup|jar|bottle|jug|(big|large|mega|huge|small|tiny)\s*amount\s*of))\s*(cocaine|alcohol|tobacco)|[a-zA-Z]+\s*((think\s*of)?)\s*(drink|take)\s*(some|a\s*(cup|jar|bottle|jug|(big|large|mega|huge|small|tiny)\s*amount\s*of))?\s*(cocaine|alcohol|tobacco)/i
 		]
+		// Note that this isn't supposed to violate any guidelines. This is supposed to detect any harmful, inappropriate, and explicit content.
 		let result = 0
 		let i = 0
 		for (;i < regexes.length; i++) {
@@ -165,7 +166,12 @@ const setup = (function(settings = {
 			let greeted = false
 			for (const item of regexes) {
 				const b = response.match(item.regex)
-				const a = item.responses(information.username, b !== null ? b[0] : "").replace(/(,?)(\s*)\./g, ".").replace(/(,?)(\s*)\!/g, "!").replace(/  /g, " ")
+				let a = item.responses(information.username, b !== null ? b[0] : "")
+				if (!Array.isArray(a)) {
+					a = a.replace(/(,?)(\s*)\./g, ".").replace(/(,?)(\s*)\!/g, "!").replace(/  /g, " ")
+				} else {
+					a = a.map(item => typeof item == "string" ? item.replace(/(,?)(\s*)\./g, ".").replace(/(,?)(\s*)\!/g, "!").replace(/  /g, " ") : item)
+				}
 				if (item.regex.test(response)) {
 					if (item.id.startsWith("greet")) {
 						if (greeted === false) {
