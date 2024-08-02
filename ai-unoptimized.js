@@ -197,6 +197,9 @@ const setup = (function(settings = {
 					}
 				})
 			}
+			if (detectAgainstGuidelines(response).result) {
+				return ra(["Woah ", "Woah, "]) + "there! " + ra(["That is ", "That's "]) + ra(["definitely ", "really "]) + ra(["not appropriate", "inappropriate"]) + ra(["!", " for " + ra(["my ", "the "]) + ra(["terms of service", "guidelines"]) + ra(["!", "my creator " + ra(["set for me!", "wrote for me!"])])])
+			}
 			return ai
 		},
 		model: "Basic 1.0"
