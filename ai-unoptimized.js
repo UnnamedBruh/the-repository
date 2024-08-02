@@ -12,6 +12,20 @@ const setup = (function(settings = {
 	function ra(array) {
 		return array[Math.floor(Math.random() * array.length)]
 	}
+	function detectAgainstGuidelines(input) {
+		const regexes = [
+			/((do\s*you|i\s*(really\s*|actually\s*)*((not\s*)?)((dis?)like|hate))\s*((my\s*)?)\s*(sex(y?)|porn|cock(?!tail)|ass(hole?)(?!emble|ert(ing?)|assian(s?))|penis|dick|gyatt|pussy)(((i?)e?)s?))|(wanna|want\s*to)\s*(see|kiss|play\s*with|watch|look\s*at|help)\s*((my\s*)?)([a-zA-Z0-9]*(\s*))(ass(hole?)|dick|penis|gyatt|butt(hole?)|pussy)|(picture|image|display|screen|)/i
+		]
+		let result = 0
+		let i = 0
+		for (;i < regexes.length; i++) {
+			const res = input.match(regexes[i])
+			if (res) {
+				return {result: true, detected: res}
+			}
+		}
+		return {result: false, detected: null}
+	}
 	const regexes = [
 		{
 			regex: /((hi(ya?)|hello|hey|howdy)(\s*))(there?)((\,)?)(\s*)(my(\s*)?)(((pal|bud(dy?)|man|friend|woman|child|([a-z]*))|\?)?)|(g'day|(good|great|marvellous|awesome)(\s*)day((,\s*)?))|(what's(\s*)shakin('|g)(\s*)my(\s*)(pal|bud(dy?)|man|friend|woman|child|bacon))|((pal|bud(dy?)|man|friend|woman|child|hey|hi|hello|([a-z]*))(,(\s*))?)(what's\s*up|what\s*is\s*up)|(hello|hi|howdy|g'day|hey)(((,?)(\s*)there)?)/i,
@@ -175,7 +189,7 @@ const setup = (function(settings = {
 			}
 			ai = ai.trim()
 			if (ai === "") {
-				return ra(["I couldn't understand that.", "Sorry, I couldn't catch that.", "Try breaking whatever you said in other sentences. Maybe that would help.", "I can't understand you yet. Try rewriting the sentences, that usually helps."])
+				return ra(["Sorry, ", "I'm sorry ", "I'm sorry, but ", "", "", ""]) + "I " + ra(["", ra(["can't", "couldn't"]) + " " + ra("quite", "really", "fully", "", "", "")]) + " understand " + ra(["what you said", "what you requested"]) + "."
 			}
 			return ai
 		},
