@@ -195,7 +195,7 @@ const setup = (function(settings = {
 			}
 			ai = ai.trim()
 			if (ai === "") {
-				return (ra(["Sorry, ", "I'm sorry ", "I'm sorry, but ", "Sorry, but ", "", "", "", ""]) + "I " + ra(["", ra(["can't", "couldn't"]) + " " + ra("quite", "really", "fully", "", "", "")]) + " understand " + ra(["what you said", "what you requested"]) + ".").replace(/I'm /, function() {
+				return (ra(["Sorry, ", "I'm sorry ", "I'm sorry, but ", "Sorry, but ", "", "", "", ""]) + "I " + ra(["can't", "couldn't"]) + " " + ra("quite", "really", "fully", "", "", "") + " understand " + ra(["what you said", "what you requested"]) + ".").replace(/I'm /, function() {
 					if (Math.random() < 0.5) {
 						return "I" + ra(["'m ", " am "]) + ra(["definitely ", "really ", "very ", " ", " "])
 					} else {
