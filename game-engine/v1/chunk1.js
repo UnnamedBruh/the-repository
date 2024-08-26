@@ -64,5 +64,89 @@ const UnnamedEngine = (function() {
 				throw new Error(`The value setting the magnitude of a Vector2 must be a number or a numeric string (this value is '${val}')`)
 			}
 		}
+		sqrt() {
+			return new Vector2(Math.sqrt(this.#Xp), Math.sqrt(this.#Yp))
+		}
+		floor() {
+			return new Vector2(Math.floor(this.#Xp), Math.floor(this.#Yp))
+		}
+		ceil() {
+			return new Vector2(Math.ceil(this.#Xp), Math.ceil(this.#Yp))
+		}
+		add(vector, num2) {
+			if (vector instanceof Vector2) {
+				const vect = new Vector2(this.#Xp, this.#Yp)
+				vect.x += vector.x
+				vect.y += vector.y
+				return vect
+			} else if (num2 === undefined) {
+				const vect = new Vector2(this.#Xp, this.#Yp)
+				vect.x += vector
+				vect.y += vector
+				return vect
+			} else {
+				const vect = new Vector2(this.#Xp, this.#Yp)
+				vect.x += vector
+				vect.y += num2
+				return vect
+			}
+		}
+		sub(vector, num2) {
+			if (vector instanceof Vector2) {
+				const vect = new Vector2(this.#Xp, this.#Yp)
+				vect.x -= vector.x
+				vect.y -= vector.y
+				return vect
+			} else if (num2 === undefined) {
+				const vect = new Vector2(this.#Xp, this.#Yp)
+				vect.x -= vector
+				vect.y -= vector
+				return vect
+			} else {
+				const vect = new Vector2(this.#Xp, this.#Yp)
+				vect.x -= vector
+				vect.y -= num2
+				return vect
+			}
+		}
+		mul(vector, num2) {
+			if (vector instanceof Vector2) {
+				const vect = new Vector2(this.#Xp, this.#Yp)
+				vect.x *= vector.x
+				vect.y *= vector.y
+				return vect
+			} else if (num2 === undefined) {
+				const vect = new Vector2(this.#Xp, this.#Yp)
+				vect.x *= vector
+				vect.y *= vector
+				return vect
+			} else {
+				const vect = new Vector2(this.#Xp, this.#Yp)
+				vect.x *= vector
+				vect.y *= num2
+				return vect
+			}
+		}
+		div(vector, num2) {
+			if (vector instanceof Vector2) {
+				const vect = new Vector2(this.#Xp, this.#Yp)
+				vect.x /= vector.x
+				vect.y /= vector.y
+				return vect
+			} else if (num2 === undefined) {
+				const vect = new Vector2(this.#Xp, this.#Yp)
+				vect.x /= vector
+				vect.y /= vector
+				return vect
+			} else {
+				const vect = new Vector2(this.#Xp, this.#Yp)
+				vect.x /= vector
+				vect.y /= num2
+				return vect
+			}
+		}
+		exp() {
+			return new Vector2(Math.exp(this.#Xp), Math.exp(this.#Yp))
+		}
 	}
 })()
