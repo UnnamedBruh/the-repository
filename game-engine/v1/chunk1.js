@@ -8,6 +8,11 @@ const UnnamedEngine = (function() {
 			if (arr.has((typeof x)[0]) && arr.has((typeof y)[0])) {
 				this.#Xp = Number(x)
 				this.#Yp = Number(y)
+				if (isNaN(this.#Xp)) {
+					throw new Error(`The X for a Vector2 must be a number or a numeric string (this value is '${this.#Xp}')`)
+				} else if (isNaN(this.#Yp)) {
+					throw new Error(`The Y for a Vector2 must be a number or a numeric string (this value is '${this.#Yp}')`)
+				}
 			} else {
 				throw new Error(`The X and Y must be a number or a numeric string. The values were (${x}, ${y})`)
 			}
@@ -36,7 +41,7 @@ const UnnamedEngine = (function() {
 		set magnitude(val) {
 			if (arr.has((typeof val)[0])) {
 				const th = Number(val)
-				if (isNaN(val)) {
+				if (isNaN(th)) {
 					throw new Error(`The value setting the magnitude of a Vector2 must be a number or a numeric string (this value is '${val}')`)
 				}
 				switch (th) {
