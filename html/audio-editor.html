@@ -74,11 +74,8 @@
                 const ec = echo / 10;
                 const len = output.length;
                 for (let i = 0; i < len; i++) {
-                    reverb = (reverb / likelinessOfEcho) + (this.audioData[i] * ec);
-                    output[i] = this.audioData[i] + reverb;
-                    if (i % 1000 == 0) {
-                        console.log(reverb - this.audioData[i]);
-                    }
+                    reverb = Math.abs((reverb / likelinessOfEcho) + (this.audioData[i] * ec));
+                    output[i] = this.audioData[i] + (reverb * 10);
                 }
                 if (trailEcho) {
                     while (reverb > 0.02) {
