@@ -21,6 +21,9 @@
         <button id="applyFilterBtn">Apply Filter</button><select id="filterTypeInput"><option>lowpass</option><option>highpass</option></select>filter frequency <input type="number" id="filterFrequencyInput" min="0" step="1" value="12000" max="24000">: Lowpass means only frequencies below the number specified (per Hurtz), while highpass means only frequencies above the number specified (per Hurtz).
         <br>
         <button id="playBtn">Play</button>
+        <br>
+        <button id="restoreBtn">Restore Original Sound</button>
+        <br>
         <button id="downloadBtn">Download</button>
     </div>
     <script>
@@ -185,7 +188,11 @@ class AudioProcessor {
         const applyReverbBtn = document.getElementById('applyReverbBtn');
         const echoInput = document.getElementById('echoInput');
         const likelinessInput = document.getElementById('likelinessInput');
+        const applyFilterBtn = document.getElementById('applyFilterBtn');
+        const filterTypeInput = document.getElementById('filterTypeInput');
+        const frequencyInput = document.getElementById('frequencyInput');
         const playBtn = document.getElementById('playBtn');
+        const restoreBtn = document.getElementById('restoreBtn');
         const downloadBtn = document.getElementById('downloadBtn');
 
         let audioProcessor = null;
@@ -242,6 +249,22 @@ class AudioProcessor {
                 sourceNode.connect(audioContext.destination);
                 sourceNode.start();
                 console.log('Playback started.');
+            }
+        });
+
+        applyFilterBtn.addEventListener('click', () => {
+            if (audioProcessor) {
+                const filter = filterTypeInput.value;
+                const freq = parseFloat(frequencyInput.value);
+                audioProcessor.filter(filter, freq);
+                console.log(`Filter applied: filterType=${filter}, frequency=${freq}`);
+            }
+        });
+
+        restoreBtn.addEventListener('click', () => {
+            if (audioProcessor) {
+                audioProcessor.restore();
+                console.log("Audio restored");
             }
         });
 
