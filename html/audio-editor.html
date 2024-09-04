@@ -177,7 +177,7 @@ class AudioProcessor {
         return new Blob([view], { type: 'audio/wav' });
     }
 
-    restoreSound() {
+    restore() {
         this.audioData = this.backupData;
     }
 }
