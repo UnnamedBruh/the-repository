@@ -62,30 +62,43 @@
             }
 
             applySimpleReverb(likelinessOfEcho, echo, trailEcho = false) {
-                if (likelinessOfEcho <= 1) {
-                    console.warn("LikelinessOfEcho should be greater than 1.");
-                }
-                if (echo <= 0) {
-                    console.warn("Echo strength should be a positive value.");
-                    return;
-                }
-                const output = new Float32Array(this.audioData.length + 20000);
-                let reverb = 0, i = 0, j = 0;
-                const ec = echo / 10;
-                const len = output.length;
-                for (; i < len; i++) {
-                    reverb = Math.abs((reverb / likelinessOfEcho) + (this.audioData[i] * ec));
-                    output[i] = reverb;
-                }
-                if (trailEcho) {
-                    while (reverb > 0.02 && j < 20000) {
-                        reverb = (reverb / likelinessOfEcho);
-                        output[i + j] = reverb;
-                        j++;
-                    }
-                }
-                this.audioData.set(output);
-            }
+    if (likelinessOfEcho <= 1) {
+        console.warn("LikelinessOfEcho should be greater than 1.");
+        return;
+    }
+    if (echo <= 0) {
+        console.warn("Echo strength should be a positive value.");
+        return;
+    }
+
+    const delay = 0.3 * this.sampleRate; // 300ms delay
+    const decay = likelinessOfEcho / 10; // Decay factor
+    const output = new Float32Array(this.audioData.length + delay);
+
+    // Apply reverb using a simple feedback delay line
+    for (let i = 0; i < this.audioData.length; i++) {
+        let delayedIndex = i - delay;
+        let delayedSample = delayedIndex >= 0 ? output[delayedIndex] : 0;
+
+        // Current output is the original sample plus the delayed sample
+        output[i] = this.audioData[i] + (delayedSample * echo);
+
+        // Feedback for delay line
+        if (delayedIndex >= 0) {
+            output[i] += delayedSample * decay;
+        }
+    }
+
+    // Optional: add trailing echo
+    if (trailEcho) {
+        for (let i = this.audioData.length; i < output.length; i++) {
+            output[i] = output[i - 1] * decay;
+        }
+    }
+
+    this.audioData.set(output.subarray(0, this.audioData.length));
+}
+
 
             convertToWav() {
                 const numChannels = 1; // Mono audio
