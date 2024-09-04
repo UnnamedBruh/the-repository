@@ -69,7 +69,7 @@
                     console.warn("Echo strength should be a positive value.");
                     return;
                 }
-                const output = new Float32Array(this.audioData.length);
+                const output = new Float32Array(this.audioData.length + 20000);
                 let reverb = 0, i = 0, j = 0;
                 const ec = echo / 10;
                 const len = output.length;
@@ -78,7 +78,7 @@
                     output[i] = reverb;
                 }
                 if (trailEcho) {
-                    while (reverb > 0.02 && j < 50000) {
+                    while (reverb > 0.02 && j < 20000) {
                         reverb = (reverb / likelinessOfEcho);
                         output[i + j] = reverb;
                         j++;
