@@ -27,7 +27,7 @@
     </div>
     <script>
 class AudioProcessor {
-    constructor(audioData = new Float32Array([]), sampleRate = 44800) {
+    constructor(audioData = new Float32Array([]), sampleRate = 48000) {
         this.audioData = audioData;
         this.sampleRate = sampleRate;
     }
@@ -71,7 +71,7 @@ class AudioProcessor {
             return;
         }
 
-        const delayLineLength = Math.floor(this.sampleRate * 0.03); // 30ms delay
+        const delayLineLength = Math.floor(this.sampleRate * 0.1); // 100ms delay
         const feedbackAmount = echo / 10;
         const output = new Float32Array(this.audioData.length);
         const delayBuffer = new Float32Array(delayLineLength);
