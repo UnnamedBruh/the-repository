@@ -70,18 +70,18 @@
                     return;
                 }
                 const output = new Float32Array(this.audioData.length);
-                let reverb = 0, i = 0;
+                let reverb = 0, i = 0, j = 0;
                 const ec = echo / 10;
                 const len = output.length;
                 for (; i < len; i++) {
                     reverb = Math.abs((reverb / likelinessOfEcho) + (this.audioData[i] * ec)) * 10;
-                    output[i] = this.audioData[i] + reverb;
+                    output[i] = reverb;
                 }
                 if (trailEcho) {
-                    while (reverb > 0.02) {
+                    while (reverb > 0.02 && j < 50000) {
                         reverb = (reverb / likelinessOfEcho);
-                        output[i] = reverb;
-                        i++;
+                        output[i + j] = reverb;
+                        j++;
                     }
                 }
                 this.audioData.set(output);
