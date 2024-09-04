@@ -76,12 +76,14 @@
                 for (let i = 0; i < len; i++) {
                     reverb = (reverb / likelinessOfEcho) + (this.audioData[i] * ec);
                     output[i] = this.audioData[i] + reverb;
+                    if (i % 1000 == 0) {
+                        console.log(reverb - this.audioData[i]);
+                    }
                 }
                 if (trailEcho) {
-                    while (reverb > 0.02 && i < len) {
+                    while (reverb > 0.02) {
                         reverb = (reverb / likelinessOfEcho);
                         output[i] = reverb;
-                        i++;
                     }
                 }
                 this.audioData.set(output);
