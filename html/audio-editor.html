@@ -26,129 +26,120 @@
         <button id="downloadBtn">Download</button>
     </div>
     <script>
-        class AudioProcessor {
-            constructor(audioData = new Float32Array([])) {
-                this.audioData = audioData;
-                this.sampleRate = 48000; // Default sample rate
-            }
-
-            normalize() {
-                if (this.audioData.length === 0) return;
-                const max = Math.max(...this.audioData);
-                const min = Math.min(...this.audioData);
-                const range = max - min;
-                if (range === 0) return;
-                for (let i = 0; i < this.audioData.length; i++) {
-                    this.audioData[i] = (this.audioData[i] - min) / range;
-                }
-            }
-
-            applyGain(gain) {
-                if (gain < 0) {
-                    console.warn("Gain should be a positive value.");
-                    return;
-                }
-                for (let i = 0; i < this.audioData.length; i++) {
-                    this.audioData[i] *= gain;
-                }
-            }
-
-            load(array) {
-                if (!(array instanceof Float32Array)) {
-                    console.error("Input must be a Float32Array.");
-                    return;
-                }
-                this.audioData = array;
-            }
-
-applySimpleReverb(likelinessOfEcho, echo, trailEcho = false) {
-    if (likelinessOfEcho <= 1) {
-        console.warn("LikelinessOfEcho should be greater than 1.");
-        return;
-    }
-    if (echo <= 0) {
-        console.warn("Echo strength should be a positive value.");
-        return;
+class AudioProcessor {
+    constructor(audioData = new Float32Array([]), sampleRate = 44800) {
+        this.audioData = audioData;
+        this.sampleRate = sampleRate;
     }
 
-    const delayLineLength = Math.floor(this.sampleRate * 0.03); // 30ms delay
-    const feedbackAmount = echo / 10;
-    const output = new Float32Array(this.audioData.length);
-    const delayBuffer = new Float32Array(delayLineLength);
-    let delayIndex = 0;
-
-    for (let i = 0; i < this.audioData.length; i++) {
-        const inputSample = this.audioData[i];
-        const delayedSample = delayBuffer[delayIndex];
-
-        // Simple reverb effect calculation
-        const reverbSample = inputSample + delayedSample * feedbackAmount;
-
-        // Store the output sample
-        output[i] = reverbSample;
-
-        // Update the delay buffer with the new sample
-        delayBuffer[delayIndex] = reverbSample;
-
-        // Increment and wrap the delay index
-        delayIndex = (delayIndex + 1) % delayLineLength;
-    }
-
-    // Optional: Add a trail echo if specified
-    if (trailEcho) {
-        const trailLength = 20000;
-        const fadeOutFactor = 0.5; // Adjust for desired fade out effect
-        for (let i = 0; i < trailLength; i++) {
-            if (i < output.length) {
-                output[i + this.audioData.length] = output[i] * Math.pow(fadeOutFactor, i / 500);
-            }
+    normalize() {
+        if (this.audioData.length === 0) return;
+        const max = Math.max(...this.audioData);
+        const min = Math.min(...this.audioData);
+        const range = max - min;
+        if (range === 0) return; // No change needed
+        for (let i = 0; i < this.audioData.length; i++) {
+            this.audioData[i] = (this.audioData[i] - min) / range;
         }
     }
 
-    this.audioData = output;
+    applyGain(gain) {
+        if (gain < 0) {
+            console.warn("Gain should be a positive value.");
+            return;
+        }
+        for (let i = 0; i < this.audioData.length; i++) {
+            this.audioData[i] *= gain;
+        }
+    }
+
+    load(array) {
+        if (!(array instanceof Float32Array)) {
+            console.error("Input must be a Float32Array.");
+            return;
+        }
+        this.audioData = array;
+    }
+
+    applySimpleReverb(likelinessOfEcho, echo, trailEcho = false) {
+        if (likelinessOfEcho <= 1) {
+            console.warn("LikelinessOfEcho should be greater than 1.");
+            return;
+        }
+        if (echo <= 0) {
+            console.warn("Echo strength should be a positive value.");
+            return;
+        }
+
+        const delayLineLength = Math.floor(this.sampleRate * 0.03); // 30ms delay
+        const feedbackAmount = echo / 10;
+        const output = new Float32Array(this.audioData.length);
+        const delayBuffer = new Float32Array(delayLineLength);
+        let delayIndex = 0;
+
+        for (let i = 0; i < this.audioData.length; i++) {
+            const inputSample = this.audioData[i];
+            const delayedSample = delayBuffer[delayIndex];
+            const reverbSample = inputSample + delayedSample * feedbackAmount;
+            output[i] = reverbSample;
+            delayBuffer[delayIndex] = reverbSample;
+            delayIndex = (delayIndex + 1) % delayLineLength;
+        }
+
+        if (trailEcho) {
+            const trailLength = this.audioData.length;
+            const fadeOutFactor = 0.5; // Adjust for desired fade out effect
+            const trailOutput = new Float32Array(this.audioData.length + trailLength);
+            trailOutput.set(output);
+            for (let i = 0; i < trailLength; i++) {
+                trailOutput[this.audioData.length + i] = output[i] * Math.pow(fadeOutFactor, i / 500);
+            }
+            this.audioData = trailOutput;
+        } else {
+            this.audioData = output;
+        }
+    }
+
+    convertToWav() {
+        const numChannels = 1; // Mono audio
+        const buffer = new ArrayBuffer(44 + this.audioData.length * 2);
+        const view = new DataView(buffer);
+
+        // RIFF chunk descriptor
+        writeString(view, 0, 'RIFF');
+        view.setUint32(4, 36 + this.audioData.length * 2, true);
+        writeString(view, 8, 'WAVE');
+
+        // fmt sub-chunk
+        writeString(view, 12, 'fmt ');
+        view.setUint32(16, 16, true);
+        view.setUint16(20, 1, true);
+        view.setUint16(22, numChannels, true);
+        view.setUint32(24, this.sampleRate, true);
+        view.setUint32(28, this.sampleRate * 2, true);
+        view.setUint16(32, 2, true);
+        view.setUint16(34, 16, true);
+
+        // data sub-chunk
+        writeString(view, 36, 'data');
+        view.setUint32(40, this.audioData.length * 2, true);
+
+        // Write audio data
+        let offset = 44;
+        for (let i = 0; i < this.audioData.length; i++) {
+            view.setInt16(offset, Math.max(-32768, Math.min(32767, this.audioData[i] * 32767)), true);
+            offset += 2;
+        }
+
+        function writeString(view, offset, string) {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
+        }
+
+        return new Blob([view], { type: 'audio/wav' });
+    }
 }
-
-            convertToWav() {
-                const numChannels = 1; // Mono audio
-                const buffer = new ArrayBuffer(44 + this.audioData.length * 2);
-                const view = new DataView(buffer);
-                
-                // RIFF chunk descriptor
-                writeString(view, 0, 'RIFF');
-                view.setUint32(4, 36 + this.audioData.length * 2, true);
-                writeString(view, 8, 'WAVE');
-                
-                // fmt sub-chunk
-                writeString(view, 12, 'fmt ');
-                view.setUint32(16, 16, true);
-                view.setUint16(20, 1, true);
-                view.setUint16(22, numChannels, true);
-                view.setUint32(24, this.sampleRate, true);
-                view.setUint32(28, this.sampleRate * 2, true);
-                view.setUint16(32, 2, true);
-                view.setUint16(34, 16, true);
-                
-                // data sub-chunk
-                writeString(view, 36, 'data');
-                view.setUint32(40, this.audioData.length * 2, true);
-                
-                // Write audio data
-                let offset = 44;
-                for (let i = 0; i < this.audioData.length; i++) {
-                    view.setInt16(offset, this.audioData[i] * 32767, true);
-                    offset += 2;
-                }
-                
-                function writeString(view, offset, string) {
-                    for (let i = 0; i < string.length; i++) {
-                        view.setUint8(offset + i, string.charCodeAt(i));
-                    }
-                }
-                
-                return new Blob([view], { type: 'audio/wav' });
-            }
-        }
-
         const fileInput = document.getElementById('fileInput');
         const normalizeBtn = document.getElementById('normalizeBtn');
         const applyGainBtn = document.getElementById('applyGainBtn');
