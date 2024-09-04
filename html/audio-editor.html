@@ -8,7 +8,7 @@
         #controls {
             margin: 10px 0;
         }
-        button, input[type="range"] {
+        button, input[type="range"], input[type="number"] {
             margin: 5px;
         }
     </style>
@@ -22,12 +22,16 @@
         <button id="applyReverbBtn">Apply Reverb</button>
         <input type="number" id="echoInput" min="0" step="0.1" value="1" />
         <input type="number" id="likelinessInput" min="1" step="0.1" value="5" />
+        <button id="playBtn">Play</button>
+        <button id="downloadBtn">Download</button>
     </div>
     <script>
         class AudioProcessor {
             constructor(audioData = new Float32Array([])) {
                 this.audioData = audioData;
+                this.sampleRate = 44100; // Default sample rate
             }
+
             normalize() {
                 if (this.audioData.length === 0) return;
                 const max = Math.max(...this.audioData);
@@ -38,6 +42,7 @@
                     this.audioData[i] = (this.audioData[i] - min) / range;
                 }
             }
+
             applyGain(gain) {
                 if (gain < 0) {
                     console.warn("Gain should be a positive value.");
@@ -47,6 +52,7 @@
                     this.audioData[i] *= gain;
                 }
             }
+
             load(array) {
                 if (!(array instanceof Float32Array)) {
                     console.error("Input must be a Float32Array.");
@@ -54,6 +60,7 @@
                 }
                 this.audioData = array;
             }
+
             applySimpleReverb(likelinessOfEcho, echo, trailEcho = false) {
                 if (likelinessOfEcho <= 1) {
                     console.warn("LikelinessOfEcho should be greater than 1.");
@@ -79,6 +86,46 @@
                 }
                 this.audioData.set(output);
             }
+
+            convertToWav() {
+                const numChannels = 1; // Mono audio
+                const buffer = new ArrayBuffer(44 + this.audioData.length * 2);
+                const view = new DataView(buffer);
+                
+                // RIFF chunk descriptor
+                writeString(view, 0, 'RIFF');
+                view.setUint32(4, 36 + this.audioData.length * 2, true);
+                writeString(view, 8, 'WAVE');
+                
+                // fmt sub-chunk
+                writeString(view, 12, 'fmt ');
+                view.setUint32(16, 16, true);
+                view.setUint16(20, 1, true);
+                view.setUint16(22, numChannels, true);
+                view.setUint32(24, this.sampleRate, true);
+                view.setUint32(28, this.sampleRate * 2, true);
+                view.setUint16(32, 2, true);
+                view.setUint16(34, 16, true);
+                
+                // data sub-chunk
+                writeString(view, 36, 'data');
+                view.setUint32(40, this.audioData.length * 2, true);
+                
+                // Write audio data
+                let offset = 44;
+                for (let i = 0; i < this.audioData.length; i++) {
+                    view.setInt16(offset, this.audioData[i] * 32767, true);
+                    offset += 2;
+                }
+                
+                function writeString(view, offset, string) {
+                    for (let i = 0; i < string.length; i++) {
+                        view.setUint8(offset + i, string.charCodeAt(i));
+                    }
+                }
+                
+                return new Blob([view], { type: 'audio/wav' });
+            }
         }
 
         const fileInput = document.getElementById('fileInput');
@@ -88,14 +135,18 @@
         const applyReverbBtn = document.getElementById('applyReverbBtn');
         const echoInput = document.getElementById('echoInput');
         const likelinessInput = document.getElementById('likelinessInput');
+        const playBtn = document.getElementById('playBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
 
         let audioProcessor = null;
+        let audioContext = null;
+        let sourceNode = null;
 
         fileInput.addEventListener('change', async (event) => {
             const file = event.target.files[0];
             if (file) {
                 try {
-                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
                     const arrayBuffer = await file.arrayBuffer();
                     const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
                     const channelData = audioBuffer.getChannelData(0);
@@ -128,6 +179,32 @@
                 const likelinessOfEcho = parseFloat(likelinessInput.value);
                 audioProcessor.applySimpleReverb(likelinessOfEcho, echo, true);
                 console.log(`Reverb applied: Echo=${echo}, Likeliness=${likelinessOfEcho}`);
+            }
+        });
+
+        playBtn.addEventListener('click', () => {
+            if (audioProcessor && audioContext) {
+                if (sourceNode) sourceNode.disconnect();
+                sourceNode = audioContext.createBufferSource();
+                const audioBuffer = audioContext.createBuffer(1, audioProcessor.audioData.length, audioProcessor.sampleRate);
+                audioBuffer.copyToChannel(audioProcessor.audioData, 0);
+                sourceNode.buffer = audioBuffer;
+                sourceNode.connect(audioContext.destination);
+                sourceNode.start();
+                console.log('Playback started.');
+            }
+        });
+
+        downloadBtn.addEventListener('click', () => {
+            if (audioProcessor) {
+                const wavBlob = audioProcessor.convertToWav();
+                const url = URL.createObjectURL(wavBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'edited-audio.wav';
+                a.click();
+                URL.revokeObjectURL(url);
+                console.log('Download started.');
             }
         });
     </script>
