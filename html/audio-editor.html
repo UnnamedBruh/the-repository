@@ -61,7 +61,7 @@
                 this.audioData = array;
             }
 
-            applySimpleReverb(likelinessOfEcho, echo, trailEcho = false) {
+applySimpleReverb(likelinessOfEcho, echo, trailEcho = false) {
     if (likelinessOfEcho <= 1) {
         console.warn("LikelinessOfEcho should be greater than 1.");
         return;
@@ -71,34 +71,42 @@
         return;
     }
 
-    const delay = 0.3 * this.sampleRate; // 300ms delay
-    const decay = likelinessOfEcho / 10; // Decay factor
-    const output = new Float32Array(this.audioData.length + delay);
+    const delayLineLength = Math.floor(this.sampleRate * 0.03); // 30ms delay
+    const feedbackAmount = echo / 10;
+    const output = new Float32Array(this.audioData.length);
+    const delayBuffer = new Float32Array(delayLineLength);
+    let delayIndex = 0;
 
-    // Apply reverb using a simple feedback delay line
     for (let i = 0; i < this.audioData.length; i++) {
-        let delayedIndex = i - delay;
-        let delayedSample = delayedIndex >= 0 ? output[delayedIndex] : 0;
+        const inputSample = this.audioData[i];
+        const delayedSample = delayBuffer[delayIndex];
 
-        // Current output is the original sample plus the delayed sample
-        output[i] = this.audioData[i] + (delayedSample * echo);
+        // Simple reverb effect calculation
+        const reverbSample = inputSample + delayedSample * feedbackAmount;
 
-        // Feedback for delay line
-        if (delayedIndex >= 0) {
-            output[i] += delayedSample * decay;
-        }
+        // Store the output sample
+        output[i] = reverbSample;
+
+        // Update the delay buffer with the new sample
+        delayBuffer[delayIndex] = reverbSample;
+
+        // Increment and wrap the delay index
+        delayIndex = (delayIndex + 1) % delayLineLength;
     }
 
-    // Optional: add trailing echo
+    // Optional: Add a trail echo if specified
     if (trailEcho) {
-        for (let i = this.audioData.length; i < output.length; i++) {
-            output[i] = output[i - 1] * decay;
+        const trailLength = 20000;
+        const fadeOutFactor = 0.5; // Adjust for desired fade out effect
+        for (let i = 0; i < trailLength; i++) {
+            if (i < output.length) {
+                output[i + this.audioData.length] = output[i] * Math.pow(fadeOutFactor, i / 500);
+            }
         }
     }
 
-    this.audioData.set(output.subarray(0, this.audioData.length));
+    this.audioData = output;
 }
-
 
             convertToWav() {
                 const numChannels = 1; // Mono audio
