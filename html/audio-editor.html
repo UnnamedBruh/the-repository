@@ -62,17 +62,13 @@ class AudioProcessor {
     }
 
     applySimpleReverb(likelinessOfEcho, echo, trailEcho = false) {
-        if (likelinessOfEcho <= 1) {
-            console.warn("LikelinessOfEcho should be greater than 1.");
-            return;
-        }
         if (echo <= 0) {
             console.warn("Echo strength should be a positive value.");
             return;
         }
 
         const delayLineLength = Math.floor(this.sampleRate * 0.1); // 100ms delay
-        const feedbackAmount = echo / 10;
+        const feedbackAmount = likelinessOfEcho / 10;
         const output = new Float32Array(this.audioData.length);
         const delayBuffer = new Float32Array(delayLineLength);
         let delayIndex = 0;
