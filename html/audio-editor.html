@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Audio Editor</title>
+    <style>
+        /* Basic styling for the UI */
+        #controls {
+            margin: 10px 0;
+        }
+        button, input[type="range"] {
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <input type="file" id="fileInput" />
+    <div id="controls">
+        <button id="normalizeBtn">Normalize</button>
+        <button id="applyGainBtn">Apply Gain</button>
+        <input type="range" id="gainSlider" min="0" max="2" step="0.1" value="1" />
+        <button id="applyReverbBtn">Apply Reverb</button>
+        <input type="number" id="echoInput" min="0" step="0.1" value="1" />
+        <input type="number" id="likelinessInput" min="1" step="0.1" value="5" />
+    </div>
+    <script>
+        class AudioProcessor {
+            constructor(audioData = new Float32Array([])) {
+                this.audioData = audioData;
+            }
+            normalize() {
+                if (this.audioData.length === 0) return;
+                const max = Math.max(...this.audioData);
+                const min = Math.min(...this.audioData);
+                const range = max - min;
+                if (range === 0) return;
+                for (let i = 0; i < this.audioData.length; i++) {
+                    this.audioData[i] = (this.audioData[i] - min) / range;
+                }
+            }
+            applyGain(gain) {
+                if (gain < 0) {
+                    console.warn("Gain should be a positive value.");
+                    return;
+                }
+                for (let i = 0; i < this.audioData.length; i++) {
+                    this.audioData[i] *= gain;
+                }
+            }
+            load(array) {
+                if (!(array instanceof Float32Array)) {
+                    console.error("Input must be a Float32Array.");
+                    return;
+                }
+                this.audioData = array;
+            }
+            applySimpleReverb(likelinessOfEcho, echo, trailEcho = false) {
+                if (likelinessOfEcho <= 1) {
+                    console.warn("LikelinessOfEcho should be greater than 1.");
+                }
+                if (echo <= 0) {
+                    console.warn("Echo strength should be a positive value.");
+                    return;
+                }
+                const output = new Float32Array(this.audioData.length);
+                let reverb = 0;
+                const ec = echo / 10;
+                const len = output.length;
+                for (let i = 0; i < len; i++) {
+                    reverb = (reverb / likelinessOfEcho) + (this.audioData[i] * ec);
+                    output[i] = reverb;
+                }
+                if (trailEcho) {
+                    while (reverb > 0.02 && i < len) {
+                        reverb = (reverb / likelinessOfEcho);
+                        output[i] = reverb;
+                        i++;
+                    }
+                }
+                this.audioData.set(output);
+            }
+        }
+
+        const fileInput = document.getElementById('fileInput');
+        const normalizeBtn = document.getElementById('normalizeBtn');
+        const applyGainBtn = document.getElementById('applyGainBtn');
+        const gainSlider = document.getElementById('gainSlider');
+        const applyReverbBtn = document.getElementById('applyReverbBtn');
+        const echoInput = document.getElementById('echoInput');
+        const likelinessInput = document.getElementById('likelinessInput');
+
+        let audioProcessor = null;
+
+        fileInput.addEventListener('change', async (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const arrayBuffer = await file.arrayBuffer();
+                    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+                    const channelData = audioBuffer.getChannelData(0);
+                    audioProcessor = new AudioProcessor(new Float32Array(channelData));
+                    console.log('Audio loaded.');
+                } catch (error) {
+                    console.error('Error processing audio file:', error);
+                }
+            }
+        });
+
+        normalizeBtn.addEventListener('click', () => {
+            if (audioProcessor) {
+                audioProcessor.normalize();
+                console.log('Normalization applied.');
+            }
+        });
+
+        applyGainBtn.addEventListener('click', () => {
+            if (audioProcessor) {
+                const gain = parseFloat(gainSlider.value);
+                audioProcessor.applyGain(gain);
+                console.log(`Gain applied: ${gain}`);
+            }
+        });
+
+        applyReverbBtn.addEventListener('click', () => {
+            if (audioProcessor) {
+                const echo = parseFloat(echoInput.value);
+                const likelinessOfEcho = parseFloat(likelinessInput.value);
+                audioProcessor.applySimpleReverb(likelinessOfEcho, echo, true);
+                console.log(`Reverb applied: Echo=${echo}, Likeliness=${likelinessOfEcho}`);
+            }
+        });
+    </script>
+</body>
+</html>
