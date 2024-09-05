@@ -1,11 +1,11 @@
 // Basic 1.1. :/
 const setup = (function(inst, ai) {
-	let users = ["null"], instructions = [], data = [], aboutUsers = {"null": []}, ainame = ai ? ai : "UnnamedAI", aliveUsers = []
+	let users = ["null"], instructions = [], aboutUsers = {"null": []}, ainame = ai ? ai : "UnnamedAI", aliveUsers = []
 	function rand(arrayorstring) {
 		return arrayorstring[Math.floor(Math.random() * arrayorstring.length)]
 	}
 	const info = {
-		regex: /((?:h(?:i|e(?:y|llo)|o(?:i|wdy))\s*(?:,\s*)?(?:\s*the(?:re|ir))|greetings|aloha)?\s*(?:,?)\s*(\w*))/gi,
+		regex: /((?:h(?:i|e(?:y|llo)|o(?:i|wdy))\s*(?:,\s*)?(?:\s*the(?:re|ir))|greetings|aloha)?\s*(?:,?)\s*(\w*))|(how(?:'s|\s*is|\s*was)\s*your\s*day\s*((?:(?:next|last)?\s*)(month|day|year|week|century)?)?(?:\s*(?:,\s*)?(\w+)))/gi,
 		response: function(match) {
 			if (match[1]) {
 				if (match[2] && aliveUsers.includes(match[2].toLowerCase())) {
@@ -19,6 +19,8 @@ const setup = (function(inst, ai) {
 						return "[no response]"
 					}
 				}
+			} else if (match[3]) {
+				
 			}
 		}
 	}
