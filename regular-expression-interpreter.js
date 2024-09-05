@@ -4,7 +4,7 @@ const generateCustomRegex = (function(reg) {
 	const literals = /[^:]|::/
 	function tokenize(text) {
 		return text.match(new RegExp([syntax, literals].map(regex => regex.source).join("|"), "g"))
-	}
+	} 
 	function parse(tokens) {
 		return tokens.map(function(token) {
 			if (/:[^:]/.test(token)) {
