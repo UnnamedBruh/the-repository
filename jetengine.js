@@ -10,7 +10,7 @@ const JetEngine = (function(code, options = {}) {
 	function lexerParser() {
 		const reg = /(var|let)\s+([a-zA-Z_$][a-zA-Z_$0-9]*)(\s*=\s*)?|const\s+([a-zA-Z_$][a-zA-Z_$0-9]*)\s*=\s*|([a-zA-Z_$][a-zA-Z_$0-9]*)\s*=\s*/,
 			values = /\d+(\.\d*)?|\.(\d+)|"((?:[^"\\\n]|\\(.|\\n))*)"|'((?:[^"\\\n]|\\(.|\\n))*)'|`((?:[^"\\]|\\.)*)`/
-		const result = code.match(new RegExp(values.source + reg.source, "g")).map(token => {
+		const result = code.match(new RegExp(values.source + "|" + reg.source, "g")).map(token => {
 			const broken = token.match(/\S+/g) || [];
 			if (token.startsWith("var") || token.startsWith("let") || token.startsWith("const")) {
 				if (broken[1] === "=") {
