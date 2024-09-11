@@ -10,8 +10,8 @@ const JetEngine = (function(code, options = {}) {
 	function lexerParser() {
 		const reg = /(var|let)\s+([a-zA-Z_$][a-zA-Z_$0-9]*)(\s*=\s*)?|const\s+([a-zA-Z_$][a-zA-Z_$0-9]*)\s*=\s*|([a-zA-Z_$][a-zA-Z_$0-9]*)\s*=\s*/,
 			values = /\d+(\.\d*)?|\.(\d+)|"((?:[^"\\\n]|\\(.|\\n))*)"|'((?:[^"\\\n]|\\(.|\\n))*)'|`((?:[^"\\]|\\.)*)`/
-		return code.match(new RegExp(values.source + reg.source, "g")).map(token => {
-			const broken = token.match(/\S+/g);
+		const result = code.match(new RegExp(values.source + reg.source, "g")).map(token => {
+			const broken = token.match(/\S+/g) || [];
 			if (token.startsWith("var") || token.startsWith("let") || token.startsWith("const")) {
 				if (broken[1] === "=") {
 					return `${broken[0]} is a reserved keyword or identifier`
@@ -34,6 +34,8 @@ const JetEngine = (function(code, options = {}) {
 				}
 			}
 		})
+		console.log(result)
+		return result
 	}
 	function compiler(tokens, isGl) {
 		const availableNames = ["$","_","a","A","b","B","c","C","d","D","e","E","f","F","g","G","h","H","i","I","j","J","k","K","l","L","m","M","n","N","o","O","p","P","q","Q","r","R","s","S","t","T","u","U","v","V","w","W","x","X","y","Y","z","Z"]
