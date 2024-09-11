@@ -34,7 +34,6 @@ const JetEngine = (function(code, options = {}) {
 				}
 			}
 		})
-		console.log(result)
 		return result
 	}
 	function compiler(tokens, isGl) {
