@@ -23,9 +23,10 @@ const JetEngine = (function(code, options = {}) {
 					}
 				}
 			} else if (/^(\d+(\.\d*)?)|\.(\d+)/.test(token)) {
+				const result = token.replace(/^0+/, "")
 				return {
 					token: 1,
-					name: token.replace(/^0+/, "")
+					name: result === "" ? "0" : result
 				}
 			} else if (broken[1] === "=") {
 				return {
@@ -38,7 +39,7 @@ const JetEngine = (function(code, options = {}) {
 	}
 	function compiler(tokens, isGl) {
 		const availableNames = ["$","_","a","A","b","B","c","C","d","D","e","E","f","F","g","G","h","H","i","I","j","J","k","K","l","L","m","M","n","N","o","O","p","P","q","Q","r","R","s","S","t","T","u","U","v","V","w","W","x","X","y","Y","z","Z"]
-		let currentVariableDefType = "", code = "", expectingValue = false, varsDefined = 0, varMap = {}
+		let currentVariableDefType = "", code = "", expectingValue = false, varsDefined = 0, varMap = {}, i = 1
 		for (const token of tokens) {
 			if (expectingValue) {
 				code += token.name + ";"
@@ -49,10 +50,11 @@ const JetEngine = (function(code, options = {}) {
 						if (varMap[token.name]) {
 							return `CompilationError: ${token.name} is already a reserved variable`
 						} else {
-							code += `${currentVariableDefType == token.key ? "," : token.key + " "}${availableNames[varsDefined]}=`
+							const cache = tokens[i] && tokens[i].token === 1
+							code += `${currentVariableDefType == token.key ? "," : token.key + " "}${availableNames[varsDefined]}${cache ? "=" : ";"}`
 							varMap[token.name] = availableNames[varsDefined]
 							varsDefined++
-							expectingValue = true
+							expectingValue = cache
 							currentVariableDefType = token.key
 						}
 						break
@@ -70,6 +72,7 @@ const JetEngine = (function(code, options = {}) {
 						return `CompilationError: Unexpected token ${token.name}`
 				}
 			}
+			i++
 		}
 		return code.replace(/;,/g, ",")
 	}
