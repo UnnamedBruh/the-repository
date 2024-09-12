@@ -23,10 +23,10 @@ const JetEngine = (function(code, options = {}) {
 					}
 				}
 			} else if (/^(\d+(\.\d*)?)|\.(\d+)/.test(token)) {
-				const result = token.replace(/^0+/, "")
+				const result = token.replace(/^0+/, "").replace(/\.(0+)$/, (match, p1) => {const cache = p1.replace(/0+$/, ''); return cache ? '.' + cache : '')
 				return {
 					token: 1,
-					name: result === "" ? "0" : result
+					name: (result === "" ? "0" : result)
 				}
 			} else if (broken[1] === "=") {
 				return {
