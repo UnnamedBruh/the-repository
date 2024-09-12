@@ -9,7 +9,7 @@ const JetEngine = (function(code, options = {}) {
 	forOpt("renameLocalVariables", true)
 	function lexerParser() {
 		const reg = /(var|let)\s+([a-zA-Z_$][a-zA-Z_$0-9]*)(\s*=\s*)?|const\s+([a-zA-Z_$][a-zA-Z_$0-9]*)\s*=\s*|([a-zA-Z_$][a-zA-Z_$0-9]*)\s*=\s*/,
-			values = /\d+(\.\d*)?|\.(\d+)|"((?:[^"\\\n]|\\(.|\\n))*)"|'((?:[^"\\\n]|\\(.|\\n))*)'|`((?:[^"\\]|\\.)*)`/
+			values = /\d+(\.\d*)?|\.(\d+)|"((?:[^"\\\n]|\\(.|\\n))*)"|'((?:[^"\\\n]|\\(.|\\n))*)'|`((?:[^"\\]|\\.)*)`|[+\-/]|\*{1,2}/
 		const result = code.match(new RegExp(values.source + "|" + reg.source, "g")).map(token => {
 			const broken = token.match(/\S+/g) || [];
 			if (token.startsWith("var") || token.startsWith("let") || token.startsWith("const")) {
@@ -23,7 +23,7 @@ const JetEngine = (function(code, options = {}) {
 					}
 				}
 			} else if (/^(\d+(\.\d*)?)|\.(\d+)/.test(token)) {
-				const result = token.replace(/^0+/, "").replace(/\.(0+)$/, (match, p1) => {const cache = p1.replace(/0+$/, ''); return cache ? '.' + cache : '')
+				const result = token.replace(/^0+/, "").replace(/\.(0+)$/, (match, p1) => {const cache = p1.replace(/0+$/, ''); return cache ? '.' + cache : ''})
 				return {
 					token: 1,
 					name: (result === "" ? "0" : result)
