@@ -1,4 +1,30 @@
-const UnnamedEngine = (function() {
+const UnnamedEngine = (function(id) {
+	let canvas, ctx
+	if (typeof id === "string") {
+		canvas = document.getElementById(id)
+		if (!canvas) {
+			throw new DOMError("The canvas element isn't found in the current environment.")
+		} else if (canvas.tagName.toLowerCase() !== "canvas") {
+			throw new DOMError("The 'canvas' element picked is not a canvas element.")
+		}
+	} else if (id instanceof HTMLElement) {
+		if (!id) {
+			throw new TypeError("The canvas element isn't passed into the game engine.")
+		}
+		if (id.tagName.toLowerCase() !== "canvas") {
+			throw new DOMError("The 'canvas' element passed into the game engine is not a canvas element.")
+		}
+	} else if (id === undefined) {
+		canvas = document.createElement("canvas")
+		canvas.appendChild(document.body)
+	}
+	if (!canvas.getContext) {
+		throw new Error("The canvas element isn't supported in your browser, or the HTML runtime isn't working properly.")
+	}
+	ctx = canvas.getContext("2d")
+	if (!ctx) {
+		throw new Error("The canvas context (currently \"2d\") isn't available in the canvas element. Make sure your browser supports the canvas element.")
+	}
 	const children = [] // Stores all of the instances in the game
 	const arr = new Set(["n", "s"])
 	class Vector2 {
@@ -291,7 +317,7 @@ const UnnamedEngine = (function() {
 		constructor(r = 0, g, b) {
 			r = Number(r)
 			if (!isNaN(r) && g === undefined && b === undefined) {
-				r = Math.floor(r)
+				r = Math.max(Math.min(Math.floor(r), 255), 0)
 				this.#r = r
 				this.#g = r
 				this.#b = r
@@ -299,9 +325,9 @@ const UnnamedEngine = (function() {
 				g = Number(g)
 				b = Number(b)
 				if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
-					this.#r = Math.floor(r)
-					this.#g = Math.floor(g)
-					this.#b = Math.floor(b)
+					this.#r = Math.max(Math.min(Math.floor(r), 255), 0)
+					this.#g = Math.max(Math.min(Math.floor(g), 255), 0)
+					this.#b = Math.max(Math.min(Math.floor(b), 255), 0)
 				} else {
 					throw new TypeError("The Color3 class must be provided with: 1. One number or numerical string.\n2. Three values of any number or numerical string.")
 				}
@@ -383,12 +409,54 @@ const UnnamedEngine = (function() {
 	class SquareDisplay {
 		#pos = null;
 		#siz = null;
-		constructor(x = 0, y = 0, width = 100, height = 100, color = Color3.black()) {
+		constructor(x = 0, y = 0, width = 100, height = 100, color) {
 			this.#pos = new IntVector2(x, y)
 			this.#siz = new IntVector2(width, height)
+			if (color instanceof Color3) {
+				this.#col = color
+			} else if (color === undefined) {
+				this.#col = Color3.black()
+			} else {
+				throw new TypeError("The provided color must be a Color3 class to be used")
+			}
+			children.push(this)
 		}
 		get class() {
 			return "SquareDisplay"
+		}
+		get position() {
+			return this.#pos
+		}
+		get x() {
+			return this.#pos.x
+		}
+		get y() {
+			return this.#pos.y
+		}
+		set x(val) {
+			this.#pos.x = val
+			return this.#pos.x
+		}
+		set y(val) {
+			this.#pos.y = val
+			return this.#pos.y
+		}
+		get width() {
+			return this.#siz.x
+		}
+		get height() {
+			return this.#siz.y
+		}
+		set width(val) {
+			this.#siz.x = val
+			return this.#siz.x
+		}
+		set height(val) {
+			this.#siz.y = val
+			return this.#siz.y
+		}
+		get color() {
+			return this.#col
 		}
 	}
 	const json = {}
@@ -397,4 +465,5 @@ const UnnamedEngine = (function() {
 	json.Instance = {
 		SquareDisplay
 	}
+	return json
 })()
