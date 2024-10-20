@@ -16,7 +16,7 @@ const UnnamedEngine = (function(id) {
 		}
 	} else if (id === undefined) {
 		canvas = document.createElement("canvas")
-		canvas.appendChild(document.body)
+		document.body.appendChild(canvas)
 	}
 	if (!canvas.getContext) {
 		throw new Error("The canvas element isn't supported in your browser, or the HTML runtime isn't working properly.")
