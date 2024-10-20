@@ -27,7 +27,12 @@ const UnnamedEngine = (function(id) {
 	}
 	const children = [] // Stores all of the instances in the game
 	const arr = new Set(["n", "s"])
-	class Vector2 {
+	class BaseVector {
+		get type() {
+			return "Vector"
+		}
+	}
+	class Vector2 extends BaseVector {
 		#Xp = 0;
 		#Yp = 0;
 		constructor(x = 0, y = 0) {
@@ -317,6 +322,9 @@ const UnnamedEngine = (function(id) {
 			return new Vector2(this.#Xp, this.#Yp)
 		}
 	}
+	function isVector(c) {
+		return c instanceof Vector2 || c instanceof IntVector2
+	}
 	class Color3 {
 		#r = 0;
 		#g = 0;
@@ -425,7 +433,214 @@ const UnnamedEngine = (function(id) {
 			return 'rgb'
 		}
 	}
-	class SquareDisplay {
+	class RectangleVector2 extends Vector2 {
+		#Xp = 0;
+		#Yp = 0;
+		#Ws = 0;
+		#Hs = 0;
+		constructor(x = 0, y = 0, width = 100, height = 100) {
+			if (arr.has((typeof x)[0]) && arr.has((typeof y)[0]) && arr.has((typeof width)[0]) && arr.has((typeof height)[0])) {
+				this.#Xp = Number(x)
+				this.#Yp = Number(y)
+				this.#Ws = Number(width)
+				this.#Hs = Number(height)
+				if (isNaN(this.#Xp)) {
+					throw new TypeError(`The X for a RectangleVector2 must be a number or a numeric string (this value is '${this.#Xp}')`)
+				} else if (isNaN(this.#Yp)) {
+					throw new TypeError(`The Y for a RectangleVector2 must be a number or a numeric string (this value is '${this.#Yp}')`)
+				} else if (isNaN(this.#Ws)) {
+					throw new TypeError(`The width for a RectangleVector2 must be a number or a numeric string (this value is '${this.#Ws}')`)
+				} else if (isNaN(this.#Hs)) {
+					throw new TypeError(`The height for a RectangleVector2 must be a number or a numeric string (this value is '${this.#Hs}')`)
+				}
+			} else {
+				throw new TypeError(`The X, Y width and height must be numbers or numeric strings. The values were (${x}, ${y}, ${width}, ${height})`)
+			}
+		}
+		get magnitudeOfPos() {
+			return Math.sqrt(this.#Xp * this.#Xp + this.#Yp * this.#Yp)
+		}
+		get unitOfPos() {
+			const m = this.magnitude
+			return new Vector2(this.#Xp / m, this.#Yp / m)
+		}
+		get x() {
+			return this.#Xp
+		}
+		get y() {
+			return this.#Yp
+		}
+		set x(val) {
+			this.#Xp = Number(val)
+			return this.#Xp
+		}
+		set y(val) {
+			this.#Yp = Number(val)
+			return this.#Yp
+		}
+		set magnitudeOfPos(val) {
+			if (arr.has((typeof val)[0])) {
+				const th = Number(val)
+				if (isNaN(th)) {
+					throw new Error(`The value setting the magnitude of a RectangleVector2 must be a number or a numeric string (this value is '${val}')`)
+				}
+				switch (th) {
+					case 1:
+						const u = this.unit
+						this.#Xp = u.x
+						this.#Yp = u.y
+						return u
+					case 0:
+						this.#Xp = 0
+						this.#Yp = 0
+						return new Vector2(0, 0)
+					default:
+						const m = this.magnitude
+						this.#Xp = (this.#Xp / m) * th
+						this.#Yp = (this.#Yp / m) * th
+						return new Vector2(this.#Xp, this.#Yp)
+				}
+			} else {
+				throw new Error(`The value setting the magnitude of a RectangleVector2 must be a number or a numeric string (this value is '${val}')`)
+			}
+		}
+		sqrtOfPos() {
+			return new Vector2(Math.sqrt(this.#Xp), Math.sqrt(this.#Yp))
+		}
+		toIntVector2() {
+			return new IntVector2(this.#Xp, this.#Yp)
+		}
+		toVector2() {
+			return new Vector2(this.#Xp, this.#Yp)
+		}
+		addAndToVector2(vector, num2) {
+			if (isVector(vector)) {
+				const vect = new Vector2(this.#Xp, this.#Yp)
+				vect.x += vector.x
+				vect.y += vector.y
+				return vect
+			} else if (num2 === undefined && (typeof vector)[0] === "n") {
+				const vect = new Vector2(this.#Xp, this.#Yp)
+				vect.x += vector
+				vect.y += vector
+				return vect
+			} else if ((typeof vector)[0] === "n" && (typeof num2)[0] === "n") {
+				const vect = new Vector2(this.#Xp, this.#Yp)
+				vect.x += vector
+				vect.y += num2
+				return vect
+			} else {
+				throw new TypeError("The 'add' function part of the RectangleVector2 class must be provided with either:\n1. Another Vector2.\n2. A number.\n3. Two numbers.")
+			}
+		}
+		subAndToVector2(vector, num2) {
+			if (isVector(vector)) {
+				const vect = new Vector2(this.#Xp, this.#Yp)
+				vect.x -= vector.x
+				vect.y -= vector.y
+				return vect
+			} else if (num2 === undefined && (typeof vector)[0] === "n") {
+				const vect = new Vector2(this.#Xp, this.#Yp)
+				vect.x -= vector
+				vect.y -= vector
+				return vect
+			} else if ((typeof vector)[0] === "n" && (typeof num2)[0] === "n") {
+				const vect = new Vector2(this.#Xp, this.#Yp)
+				vect.x -= vector
+				vect.y -= num2
+				return vect
+			} else {
+				throw new TypeError("The 'sub' function part of the RectangleVector2 class must be provided with either:\n1. Another Vector2.\n2. A number.\n3. Two numbers.")
+			}
+		}
+		mulAndToVector2(vector, num2) {
+			if (isVector(vector)) {
+				const vect = new Vector2(this.#Xp, this.#Yp)
+				vect.x *= vector.x
+				vect.y *= vector.y
+				return vect
+			} else if (num2 === undefined && (typeof vector)[0] === "n") {
+				const vect = new Vector2(this.#Xp, this.#Yp)
+				vect.x *= vector
+				vect.y *= vector
+				return vect
+			} else if ((typeof vector)[0] === "n" && (typeof num2)[0] === "n") {
+				const vect = new Vector2(this.#Xp, this.#Yp)
+				vect.x *= vector
+				vect.y *= num2
+				return vect
+			} else {
+				throw new TypeError("The 'mul' function part of the RectangleVector2 class must be provided with either:\n1. Another Vector2.\n2. A number.\n3. Two numbers.")
+			}
+		}
+		divAndToVector2(vector, num2) {
+			if (isVector(vector)) {
+				const vect = new Vector2(this.#Xp, this.#Yp)
+				vect.x /= vector.x
+				vect.y /= vector.y
+				return vect
+			} else if (num2 === undefined && (typeof vector)[0] === "n") {
+				const vect = new Vector2(this.#Xp, this.#Yp)
+				vect.x /= vector
+				vect.y /= vector
+				return vect
+			} else if ((typeof vector)[0] === "n" && (typeof num2)[0] === "n") {
+				const vect = new Vector2(this.#Xp, this.#Yp)
+				vect.x /= vector
+				vect.y /= num2
+				return vect
+			} else {
+				throw new TypeError("The 'div' function part of the RectangleVector2 class must be provided with either:\n1. Another Vector2.\n2. A number.\n3. Two numbers.")
+			}
+		}
+		expOfPos() {
+			return new Vector2(Math.exp(this.#Xp), Math.exp(this.#Yp))
+		}
+		cbrtOfPos() {
+			return new Vector2(Math.cbrt(this.#Xp), Math.cbrt(this.#Yp))
+		}
+		get area() {
+			return this.#Ws * this.#Hs
+		}
+		set area(val) {
+			if (arr.has((typeof val)[0])) {
+				val = Math.sqrt(Number(val))
+				if (isNaN(val)) {
+					throw new TypeError("Either the value is not positive, or the value is a string and isn't numerical")
+				}
+				this.#Ws = val
+				this.#Hs = val
+			} else {
+				throw new TypeError("The area must be set to a value that is a number or a numeric string")
+			}
+		}
+		get pivotCenter() {
+			return new Vector2(this.#Xp + this.#Ws / 2, this.#Yp + this.#Hs / 2)
+		}
+		isPointInBounds(vector, y) {
+			if (isVector(vector)) {
+				return this.#Xp <= vector.x && vector.x <= this.#Xp + this.#Ws && this.#Yp <= vector.y && vector.y <= this.#Yp + this.#Hs
+			} else if (arr.has((typeof vector)[0]) && arr.has((typeof y)[0])) {
+				vector = Number(vector)
+				if (isNaN(vector)) {
+					throw new TypeError("The X position passed into the 'isPointInBounds' function is a string, but isn't numerical")
+				}
+				y = Number(y)
+				if (isNaN(y)) {
+					throw new TypeError("The Y position passed into the 'isPointInBounds' function is a string, but isn't numerical")
+				}
+				return this.#Xp <= vector && vector <= this.#Xp + this.#Ws && this.#Yp <= y && y <= this.#Yp + this.#Hs
+			} else {
+				throw new TypeError("The Vector2 or X and Y positions passed are not a Vector2 or numbers or numeric strings")
+			}
+		}
+	}
+	class Instance {
+		get type() {
+			return "instance"
+		}
+	}
+	class SquareDisplay extends Instance {
 		#pos = null;
 		#siz = null;
 		#vis = true;
