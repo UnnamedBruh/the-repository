@@ -647,6 +647,7 @@ const UnnamedEngine = (function(id) {
 		#siz = null;
 		#vis = true;
 		#rem = false;
+		#col = null;
 		constructor(x = 0, y = 0, width = 100, height = 100, color, isv) {
 			this.#pos = new IntVector2(x, y)
 			this.#siz = new IntVector2(width, height)
