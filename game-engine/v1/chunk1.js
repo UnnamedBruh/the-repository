@@ -93,6 +93,9 @@ const UnnamedEngine = (function(id) {
 		sqrt() {
 			return new Vector2(Math.sqrt(this.#Xp), Math.sqrt(this.#Yp))
 		}
+		toIntVector2() {
+			return new IntVector2(this.#Xp, this.#Yp)
+		}
 		add(vector, num2) {
 			if (vector instanceof Vector2) {
 				const vect = new Vector2(this.#Xp, this.#Yp)
@@ -185,6 +188,7 @@ const UnnamedEngine = (function(id) {
 			super(x, y)
 			this.#Xp = Math.floor(this.#x)
 			this.#Yp = Math.floor(this.#y)
+			delete this.toIntVector2
 		}
 		set x(val) {
 			this.#Xp = Math.floor(Number(val))
@@ -308,6 +312,9 @@ const UnnamedEngine = (function(id) {
 			} else {
 				throw new TypeError("The 'div' function part of the IntVector2 class must be provided with either:\n1. Another Vector2.\n2. A number.\n3. Two numbers.")
 			}
+		}
+		toVector2() {
+			return new Vector2(this.#Xp, this.#Yp)
 		}
 	}
 	class Color3 {
