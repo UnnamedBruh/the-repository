@@ -29,7 +29,7 @@ const UnnamedEngine = (function(id) {
 	const arr = new Set(["n", "s"])
 	class BaseVector {
 		get type() {
-			return "Vector"
+			return "vector"
 		}
 	}
 	class Vector2 extends BaseVector {
@@ -189,6 +189,8 @@ const UnnamedEngine = (function(id) {
 		}
 	}
 	class IntVector2 extends Vector2 {
+		#Xp = 0;
+		#Yp = 0;
 		constructor(x = 0, y = 0) {
 			super(x, y)
 			this.#Xp = Math.floor(this.#x)
