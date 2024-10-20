@@ -412,13 +412,28 @@ const UnnamedEngine = (function(id) {
 		static pink() {
 			return new Color3(255, 0, 255)
 		}
+		toCSS() {
+			return `rgb(${this.#r},${this.#g},${this.#b})`
+		}
+		canBeAsHue() {
+			return (this.#r === 0 && this.#g !== 0 && this.#b !== 0) || (this.#r !== 0 && this.#g === 0 && this.#b !== 0) || (this.#r !== 0 && this.#g !== 0 && this.#b === 0)
+		}
+		isGray() {
+			return this.#r === this.#g && this.#g === this.#b
+		}
+		get palette() {
+			return 'rgb'
+		}
 	}
 	class SquareDisplay {
 		#pos = null;
 		#siz = null;
-		constructor(x = 0, y = 0, width = 100, height = 100, color) {
+		#vis = true;
+		#rem = false;
+		constructor(x = 0, y = 0, width = 100, height = 100, color, isv) {
 			this.#pos = new IntVector2(x, y)
 			this.#siz = new IntVector2(width, height)
+			this.#vis = !!isv
 			if (color instanceof Color3) {
 				this.#col = color
 			} else if (color === undefined) {
@@ -464,6 +479,20 @@ const UnnamedEngine = (function(id) {
 		}
 		get color() {
 			return this.#col
+		}
+		get visible() {
+			return this.#vis
+		}
+		set visible(val) {
+			this.#vis = !!val
+			return this.#vis
+		}
+		remove() {
+			children.splice(children.findIndex(object => object === this), 1)
+			this.#rem = true
+		}
+		get removed() {
+			this.#rem
 		}
 	}
 	const json = {}
