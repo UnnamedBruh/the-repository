@@ -713,8 +713,15 @@ const UnnamedEngine = (function(id) {
 	const json = {}
 	json.version = 0;
 	json.versionID = "V1.0";
-	json.Instance = {
-		SquareDisplay
+	json.Instance = Instance
+	json.Instance.prototype.SquareDisplay = SquareDisplay
+	json.Color = {
+		Color3
+	}
+	json.Vector = {
+		Vector2,
+		IntVector2,
+		RectangleVector2
 	}
 	return json
 })
