@@ -9,12 +9,12 @@ const UnnamedEngine = (function() {
 				this.#Xp = Number(x)
 				this.#Yp = Number(y)
 				if (isNaN(this.#Xp)) {
-					throw new Error(`The X for a Vector2 must be a number or a numeric string (this value is '${this.#Xp}')`)
+					throw new TypeError(`The X for a Vector2 must be a number or a numeric string (this value is '${this.#Xp}')`)
 				} else if (isNaN(this.#Yp)) {
-					throw new Error(`The Y for a Vector2 must be a number or a numeric string (this value is '${this.#Yp}')`)
+					throw new TypeError(`The Y for a Vector2 must be a number or a numeric string (this value is '${this.#Yp}')`)
 				}
 			} else {
-				throw new Error(`The X and Y must be a number or a numeric string. The values were (${x}, ${y})`)
+				throw new TypeError(`The X and Y must be numbers or numeric strings. The values were (${x}, ${y})`)
 			}
 		}
 		get magnitude() {
@@ -31,11 +31,11 @@ const UnnamedEngine = (function() {
 			return this.#Yp
 		}
 		set x(val) {
-			this.#Xp = Math.floor(Number(val))
+			this.#Xp = Number(val)
 			return this.#Xp
 		}
 		set y(val) {
-			this.#Yp = Math.floor(Number(val))
+			this.#Yp = Number(val)
 			return this.#Yp
 		}
 		set magnitude(val) {
@@ -67,28 +67,24 @@ const UnnamedEngine = (function() {
 		sqrt() {
 			return new Vector2(Math.sqrt(this.#Xp), Math.sqrt(this.#Yp))
 		}
-		floor() {
-			return new Vector2(Math.floor(this.#Xp), Math.floor(this.#Yp))
-		}
-		ceil() {
-			return new Vector2(Math.ceil(this.#Xp), Math.ceil(this.#Yp))
-		}
 		add(vector, num2) {
 			if (vector instanceof Vector2) {
 				const vect = new Vector2(this.#Xp, this.#Yp)
 				vect.x += vector.x
 				vect.y += vector.y
 				return vect
-			} else if (num2 === undefined) {
+			} else if (num2 === undefined && (typeof vector)[0] === "n") {
 				const vect = new Vector2(this.#Xp, this.#Yp)
 				vect.x += vector
 				vect.y += vector
 				return vect
-			} else {
+			} else if ((typeof vector)[0] === "n" && (typeof num2)[0] === "n") {
 				const vect = new Vector2(this.#Xp, this.#Yp)
 				vect.x += vector
 				vect.y += num2
 				return vect
+			} else {
+				throw new TypeError("The 'add' function part of the Vector2 class must be provided with either:\n1. Another Vector2.\n2. A number.\n3. Two numbers.")
 			}
 		}
 		sub(vector, num2) {
@@ -97,16 +93,18 @@ const UnnamedEngine = (function() {
 				vect.x -= vector.x
 				vect.y -= vector.y
 				return vect
-			} else if (num2 === undefined) {
+			} else if (num2 === undefined && (typeof vector)[0] === "n") {
 				const vect = new Vector2(this.#Xp, this.#Yp)
 				vect.x -= vector
 				vect.y -= vector
 				return vect
-			} else {
+			} else if ((typeof vector)[0] === "n" && (typeof num2)[0] === "n") {
 				const vect = new Vector2(this.#Xp, this.#Yp)
 				vect.x -= vector
 				vect.y -= num2
 				return vect
+			} else {
+				throw new TypeError("The 'sub' function part of the Vector2 class must be provided with either:\n1. Another Vector2.\n2. A number.\n3. Two numbers.")
 			}
 		}
 		mul(vector, num2) {
@@ -115,16 +113,18 @@ const UnnamedEngine = (function() {
 				vect.x *= vector.x
 				vect.y *= vector.y
 				return vect
-			} else if (num2 === undefined) {
+			} else if (num2 === undefined && (typeof vector)[0] === "n") {
 				const vect = new Vector2(this.#Xp, this.#Yp)
 				vect.x *= vector
 				vect.y *= vector
 				return vect
-			} else {
+			} else if ((typeof vector)[0] === "n" && (typeof num2)[0] === "n") {
 				const vect = new Vector2(this.#Xp, this.#Yp)
 				vect.x *= vector
 				vect.y *= num2
 				return vect
+			} else {
+				throw new TypeError("The 'mul' function part of the Vector2 class must be provided with either:\n1. Another Vector2.\n2. A number.\n3. Two numbers.")
 			}
 		}
 		div(vector, num2) {
@@ -133,20 +133,25 @@ const UnnamedEngine = (function() {
 				vect.x /= vector.x
 				vect.y /= vector.y
 				return vect
-			} else if (num2 === undefined) {
+			} else if (num2 === undefined && (typeof vector)[0] === "n") {
 				const vect = new Vector2(this.#Xp, this.#Yp)
 				vect.x /= vector
 				vect.y /= vector
 				return vect
-			} else {
+			} else if ((typeof vector)[0] === "n" && (typeof num2)[0] === "n") {
 				const vect = new Vector2(this.#Xp, this.#Yp)
 				vect.x /= vector
 				vect.y /= num2
 				return vect
+			} else {
+				throw new TypeError("The 'div' function part of the Vector2 class must be provided with either:\n1. Another Vector2.\n2. A number.\n3. Two numbers.")
 			}
 		}
 		exp() {
 			return new Vector2(Math.exp(this.#Xp), Math.exp(this.#Yp))
+		}
+		cbrt() {
+			return new Vector2(Math.cbrt(this.#Xp), Math.cbrt(this.#Yp))
 		}
 	}
 })()
