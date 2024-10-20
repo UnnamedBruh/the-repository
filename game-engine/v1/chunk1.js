@@ -193,8 +193,8 @@ const UnnamedEngine = (function(id) {
 		#Yp = 0;
 		constructor(x = 0, y = 0) {
 			super(x, y)
-			this.#Xp = Math.floor(this.#x)
-			this.#Yp = Math.floor(this.#y)
+			this.#Xp = Math.floor(this.#Xp)
+			this.#Yp = Math.floor(this.#Yp)
 			delete this.toIntVector2
 		}
 		set x(val) {
