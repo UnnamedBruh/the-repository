@@ -29,16 +29,10 @@ const UnnamedEngine = (function(id) {
 	}
 	const children = [] // Stores all of the instances in the game
 	const arr = new Set(["n", "s"])
-	class BaseVector {
+	class Vector2 {
 		#Xp = 0;
 		#Yp = 0;
-		get type() {
-			return "vector"
-		}
-	}
-	class Vector2 extends BaseVector {
 		constructor(x = 0, y = 0) {
-			super()
 			if (arr.has((typeof x)[0]) && arr.has((typeof y)[0])) {
 				this.#Xp = Number(x)
 				this.#Yp = Number(y)
@@ -191,12 +185,21 @@ const UnnamedEngine = (function(id) {
 			return new Vector2(Math.cbrt(this.#Xp), Math.cbrt(this.#Yp))
 		}
 	}
-	class IntVector2 extends Vector2 {
+	class IntVector2 {
+		#Xp = 0;
+		#Yp = 0;
 		constructor(x = 0, y = 0) {
-			super(x, y)
-			this.#Xp = Math.floor(this.#Xp)
-			this.#Yp = Math.floor(this.#Yp)
-			delete this.toIntVector2
+			if (arr.has((typeof x)[0]) && arr.has((typeof y)[0])) {
+				this.#Xp = Math.floor(Number(x))
+				this.#Yp = Math.floor(Number(y))
+				if (isNaN(this.#Xp)) {
+					throw new TypeError(`The X for a Vector2 must be a number or a numeric string (this value is '${this.#Xp}')`)
+				} else if (isNaN(this.#Yp)) {
+					throw new TypeError(`The Y for a Vector2 must be a number or a numeric string (this value is '${this.#Yp}')`)
+				}
+			} else {
+				throw new TypeError(`The X and Y must be numbers or numeric strings. The values were (${x}, ${y})`)
+			}
 		}
 		set x(val) {
 			this.#Xp = Math.floor(Number(val))
@@ -326,7 +329,7 @@ const UnnamedEngine = (function(id) {
 		}
 	}
 	function isVector(c) {
-		return c instanceof Vector2 || c instanceof IntVector2
+		return c instanceof Vector2 || c instanceof IntVector2 || c instanceof RectangleVector2
 	}
 	class Color3 {
 		#r = 0;
@@ -436,12 +439,15 @@ const UnnamedEngine = (function(id) {
 			return 'rgb'
 		}
 	}
-	class RectangleVector2 extends Vector2 {
+	class RectangleVector2 {
+		#Xp = 0;
+		#Yp = 0;
 		#Ws = 0;
 		#Hs = 0;
 		constructor(x = 0, y = 0, width = 100, height = 100) {
-			super(x, y)
-			if (arr.has((typeof width)[0]) && arr.has((typeof height)[0])) {
+			if (arr.has((typeof x)[0]) && arr.has((typeof y)[0]) && arr.has((typeof width)[0]) && arr.has((typeof height)[0])) {
+				this.#Xp = Number(x)
+				this.#Yp = Number(y)
 				this.#Ws = Number(width)
 				this.#Hs = Number(height)
 				if (isNaN(this.#Xp)) {
