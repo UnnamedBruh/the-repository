@@ -38,6 +38,7 @@ const UnnamedEngine = (function(id) {
 		#Xp = 0;
 		#Yp = 0;
 		constructor(x = 0, y = 0) {
+			super()
 			if (arr.has((typeof x)[0]) && arr.has((typeof y)[0])) {
 				this.#Xp = Number(x)
 				this.#Yp = Number(y)
@@ -191,8 +192,6 @@ const UnnamedEngine = (function(id) {
 		}
 	}
 	class IntVector2 extends Vector2 {
-		#Xp = 0;
-		#Yp = 0;
 		constructor(x = 0, y = 0) {
 			super(x, y)
 			this.#Xp = Math.floor(this.#Xp)
@@ -438,14 +437,11 @@ const UnnamedEngine = (function(id) {
 		}
 	}
 	class RectangleVector2 extends Vector2 {
-		#Xp = 0;
-		#Yp = 0;
 		#Ws = 0;
 		#Hs = 0;
 		constructor(x = 0, y = 0, width = 100, height = 100) {
-			if (arr.has((typeof x)[0]) && arr.has((typeof y)[0]) && arr.has((typeof width)[0]) && arr.has((typeof height)[0])) {
-				this.#Xp = Number(x)
-				this.#Yp = Number(y)
+			super(x, y)
+			if (arr.has((typeof width)[0]) && arr.has((typeof height)[0])) {
 				this.#Ws = Number(width)
 				this.#Hs = Number(height)
 				if (isNaN(this.#Xp)) {
@@ -651,6 +647,7 @@ const UnnamedEngine = (function(id) {
 		#rem = false;
 		#col = null;
 		constructor(x = 0, y = 0, width = 100, height = 100, color, isv) {
+			super()
 			this.#pos = new IntVector2(x, y)
 			this.#siz = new IntVector2(width, height)
 			this.#vis = !!isv
