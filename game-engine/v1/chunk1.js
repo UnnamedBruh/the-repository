@@ -17,6 +17,8 @@ const UnnamedEngine = (function(id) {
 	} else if (id === undefined) {
 		canvas = document.createElement("canvas")
 		document.body.appendChild(canvas)
+		canvas.width = window.innerWidth
+		canvas.height = window.innerHeight
 	}
 	if (!canvas.getContext) {
 		throw new Error("The canvas element isn't supported in your browser, or the HTML runtime isn't working properly.")
@@ -712,6 +714,9 @@ const UnnamedEngine = (function(id) {
 		get removed() {
 			this.#rem
 		}
+		get classIndex() {
+			return 0
+		}
 	}
 	const json = {}
 	json.version = 0;
@@ -725,6 +730,23 @@ const UnnamedEngine = (function(id) {
 		Vector2,
 		IntVector2,
 		RectangleVector2
+	}
+	json.runtime = {
+		backgroundColor: Color3.black()
+	}
+	json.runtime.render = function() {
+		ctx.fillStyle = json.runtime.backgroundColor.toCSS()
+		ctx.fillRect(0, 0, +canvas.width, +canvas.height)
+		for (const instance of children) {
+			switch (instance.classIndex) {
+				case 0:
+					if (instance.visible) {
+						ctx.fillStyle = instance.color.toCSS()
+						ctx.fillRect(instance.x, instance.y, instance.width, instance.height)
+					}
+					break
+			}
+		}
 	}
 	return json
 })
