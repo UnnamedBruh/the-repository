@@ -721,8 +721,8 @@ const UnnamedEngine = (function(id) {
 	const json = {}
 	json.version = 0;
 	json.versionID = "V1.0";
+	Instance.SquareDisplay = SquareDisplay
 	json.Instance = Instance
-	json.Instance.prototype.SquareDisplay = SquareDisplay
 	json.Color = {
 		Color3
 	}
