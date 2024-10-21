@@ -30,13 +30,13 @@ const UnnamedEngine = (function(id) {
 	const children = [] // Stores all of the instances in the game
 	const arr = new Set(["n", "s"])
 	class BaseVector {
+		#Xp = 0;
+		#Yp = 0;
 		get type() {
 			return "vector"
 		}
 	}
 	class Vector2 extends BaseVector {
-		#Xp = 0;
-		#Yp = 0;
 		constructor(x = 0, y = 0) {
 			super()
 			if (arr.has((typeof x)[0]) && arr.has((typeof y)[0])) {
